@@ -1,0 +1,9 @@
+{
+    "name": "jiejia/a-ripple-song-podcast",
+    "type": "wordpress-plugin",
+    "require": {
+      "php": ">=7.4",
+        "htmlburger/carbon-fields": "^3.6",
+        "humbug/php-scoper": "^0.18.17"
+    }
+  }
