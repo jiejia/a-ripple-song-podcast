@@ -73,8 +73,31 @@ class A_Ripple_Song_Podcast_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/a-ripple-song-podcast-admin.css', array(), $this->version, 'all' );
+		wp_register_style(
+			$this->plugin_name,
+			plugin_dir_url( __FILE__ ) . 'css/a-ripple-song-podcast-admin.css',
+			array( 'carbon-fields-metaboxes' ),
+			$this->version,
+			'all'
+		);
 
+	}
+
+	/**
+	 * Print plugin admin stylesheet as late as possible.
+	 *
+	 * WordPress prints "late styles" in admin via `_wp_footer_scripts()`. Carbon Fields
+	 * enqueues its styles late, so we print our stylesheet after everything else to
+	 * make overrides reliable.
+	 *
+	 * @since    1.0.0
+	 */
+	public function print_styles() {
+		if ( ! is_admin() ) {
+			return;
+		}
+
+		wp_print_styles( $this->plugin_name );
 	}
 
 	/**
@@ -96,7 +119,33 @@ class A_Ripple_Song_Podcast_Admin {
 		 * class.
 		 */
 
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		if ( $screen && $screen->base && $screen->post_type && $screen->post_type === A_Ripple_Song_Podcast_Episodes::POST_TYPE && in_array( $screen->base, array( 'post', 'post-new' ), true ) ) {
+			wp_enqueue_media();
+		}
+
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/a-ripple-song-podcast-admin.js', array( 'jquery' ), $this->version, false );
+
+		wp_localize_script(
+			$this->plugin_name,
+			'arsPodcastAdmin',
+			array(
+					'i18n'       => array(
+						'upload'     => __( 'Upload', 'a-ripple-song-podcast' ),
+						'remove'     => __( 'Remove', 'a-ripple-song-podcast' ),
+						'download'   => __( 'Download', 'a-ripple-song-podcast' ),
+						'fileLabel'  => __( 'File:', 'a-ripple-song-podcast' ),
+						'selectFile' => __( 'Select file', 'a-ripple-song-podcast' ),
+						'useFile'    => __( 'Use this file', 'a-ripple-song-podcast' ),
+					),
+				'mediaTypes' => array(
+					'audio'      => 'audio',
+					'transcript' => null,
+					'chapters'   => 'application',
+				),
+				'metaboxId'  => 'carbon_fields_container_ars_episode_details',
+			)
+		);
 
 	}
 

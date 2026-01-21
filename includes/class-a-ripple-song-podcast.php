@@ -76,6 +76,7 @@ class A_Ripple_Song_Podcast {
 
 		$this->load_dependencies();
 		$this->set_locale();
+		$this->define_podcast_hooks();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 
@@ -112,6 +113,46 @@ class A_Ripple_Song_Podcast {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-a-ripple-song-podcast-i18n.php';
 
 		/**
+		 * Carbon Fields bootstrap.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-a-ripple-song-podcast-carbon.php';
+
+		/**
+		 * Podcast Episodes custom post type and taxonomy.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-a-ripple-song-podcast-episodes.php';
+
+		/**
+		 * Episode meta fields (Carbon Fields).
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-a-ripple-song-podcast-episode-fields.php';
+
+		/**
+		 * Carbon Fields UI translations (fix for missing locales).
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-a-ripple-song-podcast-carbon-fields-ui-i18n.php';
+
+		/**
+		 * Episode save hooks.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-a-ripple-song-podcast-episode-save.php';
+
+		/**
+		 * Podcast Settings page (Carbon Fields).
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-a-ripple-song-podcast-podcast-settings.php';
+
+		/**
+		 * Podcast RSS feed (/feed/podcast).
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-a-ripple-song-podcast-podcast-feed.php';
+
+		/**
+		 * Admin upload MIME support.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-a-ripple-song-podcast-media.php';
+
+		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-a-ripple-song-podcast-admin.php';
@@ -144,6 +185,49 @@ class A_Ripple_Song_Podcast {
 	}
 
 	/**
+	 * Register all of the hooks related to podcast functionality.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 */
+	private function define_podcast_hooks() {
+
+		$carbon = new A_Ripple_Song_Podcast_Carbon();
+		$this->loader->add_action( 'after_setup_theme', $carbon, 'boot' );
+
+		$carbon_ui_i18n = new A_Ripple_Song_Podcast_Carbon_Fields_UI_I18n();
+		$this->loader->add_filter( 'carbon_fields_config', $carbon_ui_i18n, 'filter_carbon_fields_config' );
+
+		$episodes = new A_Ripple_Song_Podcast_Episodes();
+		$this->loader->add_action( 'init', $episodes, 'register_post_type' );
+		$this->loader->add_action( 'init', $episodes, 'register_tags' );
+		$this->loader->add_action( 'init', $episodes, 'register_category_taxonomy' );
+		$this->loader->add_filter( 'wp_insert_post_data', $episodes, 'set_default_comment_status', 10, 2 );
+
+		$episode_fields = new A_Ripple_Song_Podcast_Episode_Fields();
+		$this->loader->add_action( 'carbon_fields_register_fields', $episode_fields, 'register_fields' );
+
+		$podcast_settings = new A_Ripple_Song_Podcast_Podcast_Settings();
+		$this->loader->add_action( 'carbon_fields_register_fields', $podcast_settings, 'register_fields' );
+		$this->loader->add_filter( 'carbon_fields_should_save_field_value', $podcast_settings, 'validate_cover_field_value', 10, 3 );
+		$this->loader->add_action( 'admin_notices', $podcast_settings, 'display_cover_validation_errors' );
+		$this->loader->add_filter( 'carbon_fields_attachment_not_found_metadata', $podcast_settings, 'preview_external_cover_url', 10, 3 );
+		$this->loader->add_filter( 'rest_pre_dispatch', $podcast_settings, 'validate_cover_on_rest_save', 10, 3 );
+
+		$episode_save = new A_Ripple_Song_Podcast_Episode_Save();
+		$this->loader->add_action( 'carbon_fields_post_meta_container_saved', $episode_save, 'on_post_meta_saved', 10, 2 );
+		$this->loader->add_action( 'admin_notices', $episode_save, 'show_audio_meta_error_notice' );
+
+		$feed = new A_Ripple_Song_Podcast_Podcast_Feed();
+		$this->loader->add_action( 'init', $feed, 'register_feed', 20 );
+		$this->loader->add_action( 'pre_get_posts', $feed, 'fix_podcast_archive_query', 1 );
+		$this->loader->add_action( 'template_redirect', $feed, 'prevent_podcast_slug_from_rendering_feed', 0 );
+		$this->loader->add_action( 'admin_init', $feed, 'maybe_flush_rewrite_rules' );
+		$this->loader->add_action( 'send_headers', $feed, 'force_podcast_feed_headers', 0 );
+		$this->loader->add_filter( 'redirect_canonical', $feed, 'prevent_canonical_redirect_for_podcast_feed', 10, 2 );
+	}
+
+	/**
 	 * Register all of the hooks related to the admin area functionality
 	 * of the plugin.
 	 *
@@ -153,9 +237,14 @@ class A_Ripple_Song_Podcast {
 	private function define_admin_hooks() {
 
 		$plugin_admin = new A_Ripple_Song_Podcast_Admin( $this->get_plugin_name(), $this->get_version() );
+		$media_admin  = new A_Ripple_Song_Podcast_Media();
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
+		// Print as the very last stylesheet tag in admin HTML.
+		$this->loader->add_action( 'admin_print_footer_scripts', $plugin_admin, 'print_styles', 9999 );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		$this->loader->add_filter( 'upload_mimes', $media_admin, 'allow_upload_mimes' );
+		$this->loader->add_filter( 'wp_check_filetype_and_ext', $media_admin, 'fix_filetype_and_ext', 10, 4 );
 
 	}
 

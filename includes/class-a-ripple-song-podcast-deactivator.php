@@ -30,7 +30,7 @@ class A_Ripple_Song_Podcast_Deactivator {
 	 * @since    1.0.0
 	 */
 	public static function deactivate() {
-
+		flush_rewrite_rules( false );
 	}
 
 }

@@ -3,16 +3,20 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: A Ripple Song Podcast 1.0.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/a-ripple-song-podcast\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/a-ripple-song-"
+"podcast\n"
+"POT-Creation-Date: 2026-01-21T01:26:36+00:00\n"
+"PO-Revision-Date: 2026-01-21T01:26:36+00:00\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-01-21T01:26:36+00:00\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: a-ripple-song-podcast\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #. Plugin Name of the plugin
 #: a-ripple-song-podcast.php
@@ -168,7 +172,9 @@ msgid "Transcript (optional)"
 msgstr ""
 
 #: admin/class-a-ripple-song-podcast-episode-fields.php:88
-msgid "Optional. Upload a transcript file (vtt/srt/txt/pdf) or enter a transcript URL (https)."
+msgid ""
+"Optional. Upload a transcript file (vtt/srt/txt/pdf) or enter a transcript "
+"URL (https)."
 msgstr ""
 
 #: admin/class-a-ripple-song-podcast-episode-fields.php:92
@@ -177,7 +183,8 @@ msgid "iTunes Title (optional)"
 msgstr ""
 
 #: admin/class-a-ripple-song-podcast-episode-fields.php:93
-msgid "Optional. Apple Podcasts: overrides the episode title for <itunes:title>."
+msgid ""
+"Optional. Apple Podcasts: overrides the episode title for <itunes:title>."
 msgstr ""
 
 #: admin/class-a-ripple-song-podcast-episode-fields.php:94
@@ -290,7 +297,8 @@ msgstr ""
 
 #: admin/class-a-ripple-song-podcast-episode-save.php:313
 #, php-format
-msgid "Episode #%d: getID3 did not return playtime_seconds for downloaded audio"
+msgid ""
+"Episode #%d: getID3 did not return playtime_seconds for downloaded audio"
 msgstr ""
 
 #: admin/class-a-ripple-song-podcast-episode-save.php:316
@@ -388,7 +396,9 @@ msgid "Podcast Cover (1400–3000px square)"
 msgstr ""
 
 #: admin/class-a-ripple-song-podcast-podcast-settings.php:105
-msgid "Required. Square JPG/PNG between 1400–3000px for <itunes:image>. Apple recommends keeping the file under 512KB. Will be validated on save."
+msgid ""
+"Required. Square JPG/PNG between 1400–3000px for <itunes:image>. Apple "
+"recommends keeping the file under 512KB. Will be validated on save."
 msgstr ""
 
 #: admin/class-a-ripple-song-podcast-podcast-settings.php:107
@@ -514,7 +524,8 @@ msgid "Podcasting 2.0 GUID. If empty, feed will use site URL as fallback."
 msgstr ""
 
 #: admin/class-a-ripple-song-podcast-podcast-settings.php:178
-msgid "Apple Podcasts Verify Code (podcast:txt purpose=\\\"applepodcastsverify\\\")"
+msgid ""
+"Apple Podcasts Verify Code (podcast:txt purpose=\\\"applepodcastsverify\\\")"
 msgstr ""
 
 #: admin/class-a-ripple-song-podcast-podcast-settings.php:179
@@ -526,7 +537,9 @@ msgid "Podcasting 2.0 Funding Links (podcast:funding)"
 msgstr ""
 
 #: admin/class-a-ripple-song-podcast-podcast-settings.php:181
-msgid "Optional. If empty, no podcast:funding tags will be generated. URLs should be https."
+msgid ""
+"Optional. If empty, no podcast:funding tags will be generated. URLs should "
+"be https."
 msgstr ""
 
 #: admin/class-a-ripple-song-podcast-podcast-settings.php:184
@@ -565,7 +578,8 @@ msgstr ""
 #: admin/class-a-ripple-song-podcast-podcast-settings.php:463
 #: admin/class-a-ripple-song-podcast-podcast-settings.php:501
 #, php-format
-msgid "Podcast Cover file is too large (%1$s). Please compress it to under %2$s."
+msgid ""
+"Podcast Cover file is too large (%1$s). Please compress it to under %2$s."
 msgstr ""
 
 #: admin/class-a-ripple-song-podcast-podcast-settings.php:472
@@ -588,12 +602,16 @@ msgstr ""
 
 #: admin/class-a-ripple-song-podcast-podcast-settings.php:559
 #, php-format
-msgid "Podcast Cover resolution is too small. Minimum: %1$d × %1$d px. Current: %2$d × %2$d px."
+msgid ""
+"Podcast Cover resolution is too small. Minimum: %1$d × %1$d px. Current: "
+"%2$d × %2$d px."
 msgstr ""
 
 #: admin/class-a-ripple-song-podcast-podcast-settings.php:571
 #, php-format
-msgid "Podcast Cover resolution is too large. Maximum: %1$d × %1$d px. Current: %2$d × %2$d px."
+msgid ""
+"Podcast Cover resolution is too large. Maximum: %1$d × %1$d px. Current: "
+"%2$d × %2$d px."
 msgstr ""
 
 #: includes/class-a-ripple-song-podcast-episodes.php:29
