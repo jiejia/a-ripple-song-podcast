@@ -143,6 +143,11 @@ class A_Ripple_Song_Podcast {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-a-ripple-song-podcast-podcast-settings.php';
 
 		/**
+		 * REST API integration.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-a-ripple-song-podcast-rest.php';
+
+		/**
 		 * Podcast RSS feed (/feed/podcast).
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-a-ripple-song-podcast-podcast-feed.php';
@@ -203,6 +208,10 @@ class A_Ripple_Song_Podcast {
 		$this->loader->add_action( 'init', $episodes, 'register_tags' );
 		$this->loader->add_action( 'init', $episodes, 'register_category_taxonomy' );
 		$this->loader->add_filter( 'wp_insert_post_data', $episodes, 'set_default_comment_status', 10, 2 );
+
+		$rest = new A_Ripple_Song_Podcast_REST();
+		$this->loader->add_action( 'init', $rest, 'register_episode_meta' );
+		$this->loader->add_action( 'rest_api_init', $rest, 'register_episode_rest_fields' );
 
 		$episode_fields = new A_Ripple_Song_Podcast_Episode_Fields();
 		$this->loader->add_action( 'carbon_fields_register_fields', $episode_fields, 'register_fields' );
