@@ -612,13 +612,15 @@ msgid ""
 msgstr ""
 
 #: includes/class-a-ripple-song-podcast-episodes.php:29
-#: includes/class-a-ripple-song-podcast-episodes.php:41
-msgid "ARS Episodes"
-msgstr ""
+msgid "Episodes"
+msgstr "Episodes"
 
 #: includes/class-a-ripple-song-podcast-episodes.php:30
-#: includes/class-a-ripple-song-podcast-episodes.php:42
-msgid "ARS Episode"
+msgid "Episode"
+msgstr "Episode"
+
+#: includes/class-a-ripple-song-podcast-episodes.php:41
+msgid "ARS Episodes"
 msgstr ""
 
 #: includes/class-a-ripple-song-podcast-episodes.php:31

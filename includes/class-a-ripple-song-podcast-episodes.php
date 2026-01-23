@@ -28,8 +28,8 @@ class A_Ripple_Song_Podcast_Episodes {
 			self::POST_TYPE,
 			array(
 				'labels'             => array(
-					'name'                  => __( 'ARS Episodes', 'a-ripple-song-podcast' ),
-					'singular_name'         => __( 'ARS Episode', 'a-ripple-song-podcast' ),
+					'name'                  => __( 'Episodes', 'a-ripple-song-podcast' ),
+					'singular_name'         => __( 'Episode', 'a-ripple-song-podcast' ),
 					'add_new'               => __( 'Add New Episode', 'a-ripple-song-podcast' ),
 					'add_new_item'          => __( 'Add New Episode', 'a-ripple-song-podcast' ),
 					'edit_item'             => __( 'Edit Episode', 'a-ripple-song-podcast' ),
@@ -41,7 +41,7 @@ class A_Ripple_Song_Podcast_Episodes {
 					'not_found_in_trash'    => __( 'No episodes found in Trash', 'a-ripple-song-podcast' ),
 					'all_items'             => __( 'All Episodes', 'a-ripple-song-podcast' ),
 					'menu_name'             => __( 'ARS Episodes', 'a-ripple-song-podcast' ),
-					'name_admin_bar'        => __( 'ARS Episode', 'a-ripple-song-podcast' ),
+					'name_admin_bar'        => __( 'Episode', 'a-ripple-song-podcast' ),
 					'item_published'        => __( 'Episode published.', 'a-ripple-song-podcast' ),
 					'item_updated'          => __( 'Episode updated.', 'a-ripple-song-podcast' ),
 					'item_reverted_to_draft' => __( 'Episode reverted to draft.', 'a-ripple-song-podcast' ),

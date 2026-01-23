@@ -597,13 +597,15 @@ msgid "Podcast Cover resolution is too large. Maximum: %1$d × %1$d px. Current:
 msgstr ""
 
 #: includes/class-a-ripple-song-podcast-episodes.php:29
-#: includes/class-a-ripple-song-podcast-episodes.php:41
-msgid "ARS Episodes"
+msgid "Episodes"
 msgstr ""
 
 #: includes/class-a-ripple-song-podcast-episodes.php:30
-#: includes/class-a-ripple-song-podcast-episodes.php:42
-msgid "ARS Episode"
+msgid "Episode"
+msgstr ""
+
+#: includes/class-a-ripple-song-podcast-episodes.php:41
+msgid "ARS Episodes"
 msgstr ""
 
 #: includes/class-a-ripple-song-podcast-episodes.php:31

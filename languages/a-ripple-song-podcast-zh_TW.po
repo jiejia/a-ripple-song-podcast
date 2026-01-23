@@ -614,13 +614,15 @@ msgid ""
 msgstr "播客封面解析度過高。最大：%1$d × %1$d px。目前：%2$d × %2$d px。"
 
 #: includes/class-a-ripple-song-podcast-episodes.php:29
-#: includes/class-a-ripple-song-podcast-episodes.php:41
-msgid "ARS Episodes"
-msgstr "ARS 劇集"
+msgid "Episodes"
+msgstr "劇集"
 
 #: includes/class-a-ripple-song-podcast-episodes.php:30
-#: includes/class-a-ripple-song-podcast-episodes.php:42
-msgid "ARS Episode"
+msgid "Episode"
+msgstr "劇集"
+
+#: includes/class-a-ripple-song-podcast-episodes.php:41
+msgid "ARS Episodes"
 msgstr "ARS 劇集"
 
 #: includes/class-a-ripple-song-podcast-episodes.php:31
@@ -716,3 +718,6 @@ msgstr "新增劇集分類"
 #: includes/class-a-ripple-song-podcast-episodes.php:79
 msgid "New Episode Category Name"
 msgstr "新劇集分類名稱"
+
+#~ msgid "ARS Episode"
+#~ msgstr "ARS 劇集"
