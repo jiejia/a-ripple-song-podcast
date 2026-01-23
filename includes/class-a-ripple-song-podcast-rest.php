@@ -52,6 +52,39 @@ class A_Ripple_Song_Podcast_REST {
 
 		register_rest_field(
 			$post_type,
+			'title_text',
+			array(
+				'get_callback' => static function ( $post, $field_name, $request ) {
+					$post_id = 0;
+					if ( is_array( $post ) ) {
+						if ( isset( $post['id'] ) ) {
+							$post_id = (int) $post['id'];
+						} elseif ( isset( $post['ID'] ) ) {
+							$post_id = (int) $post['ID'];
+						}
+					} elseif ( is_object( $post ) && isset( $post->ID ) ) {
+						$post_id = (int) $post->ID;
+					}
+
+					$title = '';
+					if ( is_array( $post ) && isset( $post['title']['rendered'] ) ) {
+						$title = (string) $post['title']['rendered'];
+						$title = html_entity_decode( $title, ENT_QUOTES, 'UTF-8' );
+					} elseif ( $post_id > 0 ) {
+						$title = (string) get_post_field( 'post_title', $post_id );
+					}
+
+					return wp_strip_all_tags( $title, true );
+				},
+				'schema'       => array(
+					'description' => __( 'Episode title (plain text)', 'a-ripple-song-podcast' ),
+					'type'        => 'string',
+				),
+			)
+		);
+
+		register_rest_field(
+			$post_type,
 			'audio_file',
 			array(
 				'get_callback' => static function ( $post, $field_name, $request ) {
@@ -104,7 +137,11 @@ class A_Ripple_Song_Podcast_REST {
 	private static function get_episode_value( $post_id, $key, $default ) {
 		if ( function_exists( 'carbon_get_post_meta' ) ) {
 			$value = carbon_get_post_meta( $post_id, $key );
-			if ( null !== $value && '' !== $value && array() !== $value ) {
+			if ( is_array( $value ) ) {
+				return $default;
+			}
+
+			if ( null !== $value && '' !== $value ) {
 				return $value;
 			}
 		}

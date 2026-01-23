@@ -69,16 +69,33 @@ class A_Ripple_Song_Podcast_Episode_Save {
 		$auto_meta = $this->calculate_audio_meta( $post_id );
 
 		if ( ! empty( $auto_meta['duration'] ) ) {
-			update_post_meta( $post_id, 'duration', (int) $auto_meta['duration'] );
+			$this->set_episode_field_value( $post_id, 'duration', (int) $auto_meta['duration'] );
 		}
 
 		if ( ! empty( $auto_meta['length'] ) ) {
-			update_post_meta( $post_id, 'audio_length', (int) $auto_meta['length'] );
+			$this->set_episode_field_value( $post_id, 'audio_length', (int) $auto_meta['length'] );
 		}
 
 		if ( ! empty( $auto_meta['mime'] ) ) {
-			update_post_meta( $post_id, 'audio_mime', (string) $auto_meta['mime'] );
+			$this->set_episode_field_value( $post_id, 'audio_mime', (string) $auto_meta['mime'] );
 		}
+	}
+
+	/**
+	 * Persist an Episode Details field using Carbon Fields when available.
+	 *
+	 * @param int          $post_id
+	 * @param string       $key
+	 * @param string|int   $value
+	 * @return void
+	 */
+	private function set_episode_field_value( $post_id, $key, $value ) {
+		if ( function_exists( 'carbon_set_post_meta' ) ) {
+			carbon_set_post_meta( $post_id, $key, $value );
+			return;
+		}
+
+		update_post_meta( $post_id, '_' . ltrim( (string) $key, '_' ), $value );
 	}
 
 	/**
@@ -96,7 +113,7 @@ class A_Ripple_Song_Podcast_Episode_Save {
 		);
 
 		if ( $audio_url === '' ) {
-			$audio_url = (string) get_post_meta( $post_id, 'audio_file', true );
+			$audio_url = $this->get_episode_field_value( $post_id, 'audio_file' );
 		}
 
 		if ( $audio_url === '' ) {
@@ -264,6 +281,27 @@ class A_Ripple_Song_Podcast_Episode_Save {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Read an Episode Details field using Carbon Fields when available.
+	 *
+	 * @param int    $post_id
+	 * @param string $key
+	 * @return string
+	 */
+	private function get_episode_field_value( $post_id, $key ) {
+		if ( function_exists( 'carbon_get_post_meta' ) ) {
+			$value = carbon_get_post_meta( $post_id, $key );
+			if ( is_string( $value ) ) {
+				return (string) $value;
+			}
+			if ( is_numeric( $value ) ) {
+				return (string) $value;
+			}
+		}
+
+		return (string) get_post_meta( $post_id, '_' . ltrim( (string) $key, '_' ), true );
 	}
 
 	/**

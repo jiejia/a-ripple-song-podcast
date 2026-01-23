@@ -217,9 +217,9 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
 	 * @return string
 	 */
 	private function resolve_media_url( $postId, $urlMetaKey ) {
-		$url = (string) get_post_meta( $postId, $urlMetaKey, true );
+		$url = (string) $this->get_episode_meta_value( $postId, $urlMetaKey, '' );
 
-		$attachmentId = (int) get_post_meta( $postId, $urlMetaKey . '_id', true );
+		$attachmentId = (int) $this->get_episode_meta_value( $postId, $urlMetaKey . '_id', 0 );
 		if ( $attachmentId > 0 ) {
 			$attachmentUrl = wp_get_attachment_url( $attachmentId );
 			if ( is_string( $attachmentUrl ) && $attachmentUrl !== '' ) {
@@ -246,6 +246,40 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
 		}
 
 		return $url;
+	}
+
+	/**
+	 * Get Episode Details values stored by Carbon Fields (preferred) with fallback to raw post meta.
+	 *
+	 * Carbon Fields stores post meta as protected keys (leading underscore).
+	 *
+	 * @param int   $post_id
+	 * @param string $key
+	 * @param mixed  $default
+	 * @return mixed
+	 */
+	private function get_episode_meta_value( $post_id, $key, $default ) {
+		if ( function_exists( 'carbon_get_post_meta' ) ) {
+			$value = carbon_get_post_meta( $post_id, $key );
+			if ( is_array( $value ) ) {
+				return empty( $value ) ? $default : $value;
+			}
+			if ( null !== $value && '' !== $value ) {
+				return $value;
+			}
+		}
+
+		$underscored = get_post_meta( $post_id, '_' . ltrim( (string) $key, '_' ), true );
+		if ( '' !== $underscored && null !== $underscored ) {
+			return $underscored;
+		}
+
+		$unprefixed = get_post_meta( $post_id, ltrim( (string) $key, '_' ), true );
+		if ( '' !== $unprefixed && null !== $unprefixed ) {
+			return $unprefixed;
+		}
+
+		return $default;
 	}
 
 	/**
@@ -436,8 +470,8 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
 	 * @return array
 	 */
 	private function get_episode_people( $post_id ) {
-		$members = $this->build_person_entries( get_post_meta( $post_id, 'members', true ), 'host' );
-		$guests  = $this->build_person_entries( get_post_meta( $post_id, 'guests', true ), 'guest' );
+		$members = $this->build_person_entries( $this->get_episode_meta_value( $post_id, 'members', array() ), 'host' );
+		$guests  = $this->build_person_entries( $this->get_episode_meta_value( $post_id, 'guests', array() ), 'guest' );
 
 		$people = array_merge( $members, $guests );
 		if ( empty( $people ) ) {
@@ -701,16 +735,16 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
 				$post_id = (int) get_the_ID();
 
 				$audio_url       = $this->encode_url_path_for_rss( $this->resolve_media_url( $post_id, 'audio_file' ) );
-				$audio_length    = (string) get_post_meta( $post_id, 'audio_length', true );
-				$audio_mime      = (string) get_post_meta( $post_id, 'audio_mime', true );
-				$duration        = (int) get_post_meta( $post_id, 'duration', true );
+				$audio_length    = (string) $this->get_episode_meta_value( $post_id, 'audio_length', '' );
+				$audio_mime      = (string) $this->get_episode_meta_value( $post_id, 'audio_mime', '' );
+				$duration        = (int) $this->get_episode_meta_value( $post_id, 'duration', 0 );
 				$duration_formatted = $duration > 0 ? $this->format_duration( $duration ) : '';
 
-				$episode_explicit = (string) get_post_meta( $post_id, 'episode_explicit', true );
-				$episode_type     = (string) get_post_meta( $post_id, 'episode_type', true );
-				$episode_number   = (string) get_post_meta( $post_id, 'episode_number', true );
-				$season_number    = (string) get_post_meta( $post_id, 'season_number', true );
-				$episode_author   = (string) get_post_meta( $post_id, 'episode_author', true );
+				$episode_explicit = (string) $this->get_episode_meta_value( $post_id, 'episode_explicit', '' );
+				$episode_type     = (string) $this->get_episode_meta_value( $post_id, 'episode_type', '' );
+				$episode_number   = (string) $this->get_episode_meta_value( $post_id, 'episode_number', '' );
+				$season_number    = (string) $this->get_episode_meta_value( $post_id, 'season_number', '' );
+				$episode_author   = (string) $this->get_episode_meta_value( $post_id, 'episode_author', '' );
 				if ( $episode_author === '' ) {
 					$episode_author = (string) $channel_author;
 				}
@@ -721,23 +755,23 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
 				}
 
 				$episode_transcript = $this->encode_url_path_for_rss( $this->resolve_media_url( $post_id, 'episode_transcript' ) );
-				$episode_itunes_title = (string) get_post_meta( $post_id, 'itunes_title', true );
-				$episode_subtitle     = (string) get_post_meta( $post_id, 'episode_subtitle', true );
-				$episode_summary      = (string) get_post_meta( $post_id, 'episode_summary', true );
+				$episode_itunes_title = (string) $this->get_episode_meta_value( $post_id, 'itunes_title', '' );
+				$episode_subtitle     = (string) $this->get_episode_meta_value( $post_id, 'episode_subtitle', '' );
+				$episode_summary      = (string) $this->get_episode_meta_value( $post_id, 'episode_summary', '' );
 
-				$episode_guid       = (string) get_post_meta( $post_id, 'episode_guid', true );
+				$episode_guid       = (string) $this->get_episode_meta_value( $post_id, 'episode_guid', '' );
 				$episode_permalink  = (string) get_permalink( $post_id );
 				if ( $episode_guid === '' ) {
 					$episode_guid = $episode_permalink;
 				}
 
-				$episode_block = (string) get_post_meta( $post_id, 'episode_block', true );
+				$episode_block = (string) $this->get_episode_meta_value( $post_id, 'episode_block', '' );
 				$episode_people = $this->get_episode_people( $post_id );
 
 				$transcript_url = $episode_transcript;
 				$episode_chapters_url = $this->encode_url_path_for_rss( $this->resolve_media_url( $post_id, 'episode_chapters' ) );
-				$episode_chapters_type = (string) ( get_post_meta( $post_id, 'episode_chapters_type', true ) ?: 'application/json+chapters' );
-				$episode_soundbites = get_post_meta( $post_id, 'episode_soundbites', true );
+				$episode_chapters_type = (string) ( $this->get_episode_meta_value( $post_id, 'episode_chapters_type', '' ) ?: 'application/json+chapters' );
+				$episode_soundbites = $this->get_episode_meta_value( $post_id, 'episode_soundbites', array() );
 
 				$item_summary = $episode_summary ? $episode_summary : get_the_excerpt();
 				$item_summary = $this->sanitize_rss_summary( (string) $item_summary );
