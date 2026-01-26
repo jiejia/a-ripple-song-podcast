@@ -222,6 +222,8 @@ class A_Ripple_Song_Podcast {
 		$this->loader->add_action( 'admin_notices', $podcast_settings, 'display_cover_validation_errors' );
 		$this->loader->add_filter( 'carbon_fields_attachment_not_found_metadata', $podcast_settings, 'preview_external_cover_url', 10, 3 );
 		$this->loader->add_filter( 'rest_pre_dispatch', $podcast_settings, 'validate_cover_on_rest_save', 10, 3 );
+		$this->loader->add_action( 'admin_menu', $podcast_settings, 'remove_landing_submenu_item', 999 );
+		$this->loader->add_action( 'admin_init', $podcast_settings, 'maybe_redirect_settings_landing_page' );
 
 		$episode_save = new A_Ripple_Song_Podcast_Episode_Save();
 		$this->loader->add_action( 'carbon_fields_post_meta_container_saved', $episode_save, 'on_post_meta_saved', 10, 2 );

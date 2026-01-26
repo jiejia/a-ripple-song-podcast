@@ -12,6 +12,16 @@ use Carbon_Fields\Field;
 class A_Ripple_Song_Podcast_Podcast_Settings {
 
 	/**
+	 * Settings landing page slug (Carbon Fields page file).
+	 */
+	private const SETTINGS_PAGE_FILE = 'ars_settings.php';
+
+	/**
+	 * Main settings page slug (Carbon Fields page file).
+	 */
+	private const PODCAST_SETTINGS_PAGE_FILE = 'ars_podcast_settings.php';
+
+	/**
 	 * ID for the top-level Carbon Fields menu container.
 	 */
 	private $menu_container = null;
@@ -35,18 +45,7 @@ class A_Ripple_Song_Podcast_Podcast_Settings {
 		$this->menu_container = Container::make( 'theme_options', __( 'A Ripple Song', 'a-ripple-song-podcast' ) )
 			->set_icon( 'dashicons-admin-settings' )
 			->set_page_menu_position( 60 )
-			->set_page_file( 'ars_settings.php' )
-			->add_fields(
-				array(
-					Field::make( 'html', 'ars_settings_help', __( 'A Ripple Song', 'a-ripple-song-podcast' ) )
-						->set_html(
-							sprintf(
-								'<p>%s</p>',
-								esc_html__( 'Use the submenu to configure Podcast Settings.', 'a-ripple-song-podcast' )
-							)
-						),
-				)
-			);
+			->set_page_file( self::SETTINGS_PAGE_FILE );
 
 		return $this->menu_container;
 	}
@@ -62,7 +61,7 @@ class A_Ripple_Song_Podcast_Podcast_Settings {
 		$parent = $this->register_menu_container();
 
 		$podcast = Container::make( 'theme_options', __( 'Podcast Settings', 'a-ripple-song-podcast' ) )
-			->set_page_file( 'ars_podcast_settings.php' )
+			->set_page_file( self::PODCAST_SETTINGS_PAGE_FILE )
 			->set_page_menu_title( __( 'Podcast Settings', 'a-ripple-song-podcast' ) );
 
 		if ( $parent ) {
@@ -191,6 +190,32 @@ class A_Ripple_Song_Podcast_Podcast_Settings {
 					->set_help_text( __( 'Optional. If empty, generator tag will not be included.', 'a-ripple-song-podcast' ) ),
 			)
 		);
+	}
+
+	/**
+	 * Hide the empty landing page submenu item for the top-level menu.
+	 */
+	public function remove_landing_submenu_item() {
+		remove_submenu_page( self::SETTINGS_PAGE_FILE, self::SETTINGS_PAGE_FILE );
+	}
+
+	/**
+	 * Redirect the top-level menu landing page to the first real settings page.
+	 */
+	public function maybe_redirect_settings_landing_page() {
+		if ( ! is_admin() || wp_doing_ajax() ) {
+			return;
+		}
+
+		$input = stripslashes_deep( $_GET );
+		$page  = isset( $input['page'] ) ? $input['page'] : '';
+
+		if ( $page !== self::SETTINGS_PAGE_FILE ) {
+			return;
+		}
+
+		wp_safe_redirect( admin_url( 'admin.php?page=' . self::PODCAST_SETTINGS_PAGE_FILE ) );
+		exit;
 	}
 
 	/**
