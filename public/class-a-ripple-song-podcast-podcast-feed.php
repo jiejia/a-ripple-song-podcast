@@ -548,7 +548,8 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
 		if ( $timestamp <= 0 ) {
 			$timestamp = time();
 		}
-		return gmdate( 'D, d M Y H:i:s \\G\\M\\T', $timestamp );
+		// RFC 2822 "zone" is typically expected as numeric offset (e.g. +0000).
+		return gmdate( 'D, d M Y H:i:s O', $timestamp );
 	}
 
 	/**
