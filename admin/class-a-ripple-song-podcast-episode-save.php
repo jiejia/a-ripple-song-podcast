@@ -90,8 +90,7 @@ class A_Ripple_Song_Podcast_Episode_Save {
 	 * @return void
 	 */
 	private function set_episode_field_value( $post_id, $key, $value ) {
-		if ( function_exists( 'carbon_set_post_meta' ) ) {
-			carbon_set_post_meta( $post_id, $key, $value );
+		if ( class_exists( 'A_Ripple_Song_Podcast_Carbon_Compat' ) && A_Ripple_Song_Podcast_Carbon_Compat::set_post_meta( $post_id, $key, $value ) ) {
 			return;
 		}
 
@@ -325,8 +324,8 @@ class A_Ripple_Song_Podcast_Episode_Save {
 	 * @return string
 	 */
 	private function get_episode_field_value( $post_id, $key ) {
-		if ( function_exists( 'carbon_get_post_meta' ) ) {
-			$value = carbon_get_post_meta( $post_id, $key );
+		if ( class_exists( 'A_Ripple_Song_Podcast_Carbon_Compat' ) ) {
+			$value = A_Ripple_Song_Podcast_Carbon_Compat::get_post_meta( $post_id, $key );
 			if ( is_string( $value ) ) {
 				return (string) $value;
 			}

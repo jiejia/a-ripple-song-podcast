@@ -1,9 +1,18 @@
 {
-    "name": "jiejia/a-ripple-song-podcast",
-    "type": "wordpress-plugin",
-    "require": {
-      "php": ">=7.4",
-        "htmlburger/carbon-fields": "^3.6",
-        "humbug/php-scoper": "^0.18.17"
-    }
+  "name": "jiejia/a-ripple-song-podcast",
+  "type": "wordpress-plugin",
+  "require": {
+    "php": ">=7.4",
+    "htmlburger/carbon-fields": "^3.6"
+  },
+  "require-dev": {
+    "humbug/php-scoper": "^0.18.17"
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "scripts": {
+    "scoper:build": "bash bin/build-scoped-vendor.sh",
+    "build:dist": "bash bin/build-dist.sh"
   }
+}

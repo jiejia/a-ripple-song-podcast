@@ -1,0 +1,43 @@
+name: Build & Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          tools: composer
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
+
+      - name: Build scoped vendor
+        run: composer run -n scoper:build
+
+      - name: Lint PHP
+        run: |
+          php -l a-ripple-song-podcast.php
+          php -l includes/class-a-ripple-song-podcast.php
+          php -l public/class-a-ripple-song-podcast-podcast-feed.php
+
+      - name: Build plugin zip
+        run: composer run -n build:dist -- "${GITHUB_REF_NAME}"
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/*.zip

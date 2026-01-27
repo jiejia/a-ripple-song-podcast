@@ -118,6 +118,11 @@ class A_Ripple_Song_Podcast {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-a-ripple-song-podcast-carbon.php';
 
 		/**
+		 * Carbon Fields compat (scoped/unscoped builds).
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-a-ripple-song-podcast-carbon-compat.php';
+
+		/**
 		 * Podcast Episodes custom post type and taxonomy.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-a-ripple-song-podcast-episodes.php';

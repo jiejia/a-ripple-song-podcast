@@ -5,6 +5,10 @@ declare(strict_types=1);
 /** @var Symfony\Component\Finder\Finder $finder */
 $finder = Isolated\Symfony\Component\Finder\Finder::class;
 
+// Allow overriding the input vendor directory (useful for CI/release builds where
+// dev dependencies should not be included in the shipped vendor).
+$inputVendorDir = getenv('ARS_SCOPER_INPUT_DIR') ?: (__DIR__ . '/vendor');
+
 // You can do your own things here, e.g. collecting symbols to expose dynamically
 // or files to exclude.
 // However beware that this file is executed by PHP-Scoper, hence if you are using
@@ -23,12 +27,31 @@ $finder = Isolated\Symfony\Component\Finder\Finder::class;
 // );
 $excludedFiles = [];
 
+// Keep Composer's autoloader files unscoped so we can bootstrap a working loader,
+// then map prefixed classes back to their original names for file resolution.
+$excludedFiles[] = $inputVendorDir . '/autoload.php';
+$excludedFiles   = array_merge(
+	$excludedFiles,
+	array_map(
+		static fn (SplFileInfo $fileInfo) => $fileInfo->getPathname(),
+		iterator_to_array(
+			$finder::create()
+				->files()
+				->in($inputVendorDir . '/composer')
+				->name('*.php'),
+			false
+		)
+	)
+);
+
 return [
     // The prefix configuration. If a non-null value is used, a random prefix
     // will be generated instead.
     //
     // For more see: https://github.com/humbug/php-scoper/blob/master/docs/configuration.md#prefix
-    'prefix' => "A_Ripple_Song_Podcast_",
+    // Prefix all bundled vendor dependencies under a dedicated namespace so they never collide
+    // with other Composer-based plugins.
+    'prefix' => 'A_Ripple_Song_Podcast\\Vendor',
 
     // The base output directory for the prefixed files.
     // This will be overridden by the 'output-dir' command line option if present.
@@ -42,31 +65,22 @@ return [
     //
     // For more see: https://github.com/humbug/php-scoper/blob/master/docs/configuration.md#finders-and-paths
     'finders' => [
-        
-        // $finder::create()->files()->in('src'),
-        // $finder::create()
-        //     ->files()
-        //     ->ignoreVCS(true)
-        //     ->notName('/LICENSE|.*\\.md|.*\\.dist|Makefile|composer\\.json|composer\\.lock/')
-        //     ->exclude([
-        //         'doc',
-        //         'test',
-        //         'test_old',
-        //         'tests',
-        //         'Tests',
-        //         'vendor-bin',
-        //     ])
-        //     ->in('vendor'),
-        // $finder::create()->append([
-        //     'composer.json',
-        // ]),
+        // Scope the entire vendor tree, including non-PHP assets (Carbon Fields admin UI).
         $finder::create()
-              ->files()
-              ->in(__DIR__ . '/vendor')
-              ->name('*.php')
-              ->ignoreVCS(true)
-              ->ignoreDotFiles(true),
-        
+            ->files()
+            ->in($inputVendorDir)
+            ->ignoreVCS(true)
+            ->ignoreDotFiles(true)
+            ->exclude([
+                'bin',
+                'doc',
+                'docs',
+                'test',
+                'test_old',
+                'tests',
+                'Tests',
+                'vendor-bin',
+            ]),
     ],
 
     // List of excluded files, i.e. files for which the content will be left untouched.
@@ -89,13 +103,7 @@ return [
     // heart contents.
     //
     // For more see: https://github.com/humbug/php-scoper/blob/master/docs/configuration.md#patchers
-    'patchers' => [
-        static function (string $filePath, string $prefix, string $contents): string {
-            // Change the contents here.
-
-            return $contents;
-        },
-    ],
+    'patchers' => [],
 
     // List of symbols to consider internal i.e. to leave untouched.
     //
@@ -119,9 +127,10 @@ return [
     // List of symbols to expose.
     //
     // For more information see: https://github.com/humbug/php-scoper/blob/master/docs/configuration.md#exposed-symbols
-    'expose-global-constants' => true,
-    'expose-global-classes' => true,
-    'expose-global-functions' => true,
+    // Do not expose original symbols: keep vendor isolated.
+    'expose-global-constants' => false,
+    'expose-global-classes' => false,
+    'expose-global-functions' => false,
     'expose-namespaces' => [
         // 'Acme\Foo'                     // The Acme\Foo namespace (and sub-namespaces)
         // '~^PHPUnit\\\\Framework$~',    // The whole namespace PHPUnit\Framework (but not sub-namespaces)

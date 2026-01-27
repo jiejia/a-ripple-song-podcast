@@ -38,7 +38,10 @@ if ( ! defined( 'WPINC' ) ) {
 define( 'A_RIPPLE_SONG_PODCAST_VERSION', '1.0.0' );
 
 $autoload = __DIR__ . '/vendor/autoload.php';
-if (file_exists($autoload)) {
+$scoper_autoload = __DIR__ . '/vendor/scoper-autoload.php';
+if ( file_exists( $scoper_autoload ) ) {
+	require_once $scoper_autoload;
+} elseif ( file_exists( $autoload ) ) {
 	require_once $autoload;
 }
 

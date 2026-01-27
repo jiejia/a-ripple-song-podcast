@@ -259,7 +259,15 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
 	 * @return mixed
 	 */
 	private function get_episode_meta_value( $post_id, $key, $default ) {
-		if ( function_exists( 'carbon_get_post_meta' ) ) {
+		if ( class_exists( 'A_Ripple_Song_Podcast_Carbon_Compat' ) ) {
+			$value = A_Ripple_Song_Podcast_Carbon_Compat::get_post_meta( $post_id, $key );
+			if ( is_array( $value ) ) {
+				return empty( $value ) ? $default : $value;
+			}
+			if ( null !== $value && '' !== $value ) {
+				return $value;
+			}
+		} elseif ( function_exists( 'carbon_get_post_meta' ) ) {
 			$value = carbon_get_post_meta( $post_id, $key );
 			if ( is_array( $value ) ) {
 				return empty( $value ) ? $default : $value;
@@ -700,13 +708,38 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
 
 		$site_url          = home_url( '/' );
 		$feed_url          = $this->get_canonical_feed_url();
-		$channel_title     = function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_title' ) ?: get_bloginfo( 'name' ) ) : get_bloginfo( 'name' );
-		$channel_subtitle  = function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_subtitle' ) ?: '' ) : '';
-		$channel_description = function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_description' ) ?: get_bloginfo( 'description' ) ) : get_bloginfo( 'description' );
-		$channel_author    = function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_author' ) ?: get_bloginfo( 'name' ) ) : get_bloginfo( 'name' );
-		$channel_owner_name  = function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_owner_name' ) ?: $channel_author ) : $channel_author;
-		$channel_owner_email = function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_owner_email' ) ?: get_bloginfo( 'admin_email' ) ) : get_bloginfo( 'admin_email' );
-		$channel_cover       = $this->encode_url_path_for_rss( (string) ( function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_cover' ) ?: '' ) : '' ) );
+
+		$get_theme_option = static function ( $name, $default = null ) {
+			$value = null;
+
+			if ( class_exists( 'A_Ripple_Song_Podcast_Carbon_Compat' ) ) {
+				$value = A_Ripple_Song_Podcast_Carbon_Compat::get_theme_option( (string) $name );
+			} elseif ( function_exists( 'carbon_get_theme_option' ) ) {
+				$value = carbon_get_theme_option( (string) $name );
+			}
+
+			if ( is_array( $value ) ) {
+				return is_array( $default ) ? $value : $default;
+			}
+
+			if ( null === $value ) {
+				return $default;
+			}
+
+			if ( is_string( $value ) && $value === '' ) {
+				return $default;
+			}
+
+			return $value;
+		};
+
+		$channel_title       = (string) $get_theme_option( 'crb_podcast_title', get_bloginfo( 'name' ) );
+		$channel_subtitle    = (string) $get_theme_option( 'crb_podcast_subtitle', '' );
+		$channel_description = (string) $get_theme_option( 'crb_podcast_description', get_bloginfo( 'description' ) );
+		$channel_author      = (string) $get_theme_option( 'crb_podcast_author', get_bloginfo( 'name' ) );
+		$channel_owner_name  = (string) $get_theme_option( 'crb_podcast_owner_name', $channel_author );
+		$channel_owner_email = (string) $get_theme_option( 'crb_podcast_owner_email', get_bloginfo( 'admin_email' ) );
+		$channel_cover       = $this->encode_url_path_for_rss( (string) $get_theme_option( 'crb_podcast_cover', '' ) );
 		$default_item_image  = $channel_cover;
 
 		$channel_description = $this->ensure_min_channel_description(
@@ -725,23 +758,23 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
 			}
 		}
 
-		$channel_explicit          = $this->normalize_itunes_explicit( function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_explicit' ) ?: 'false' ) : 'false', 'false' );
-		$channel_language_raw      = function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_language' ) ?: ( get_bloginfo( 'language' ) ?: 'en-US' ) ) : ( get_bloginfo( 'language' ) ?: 'en-US' );
+		$channel_explicit          = $this->normalize_itunes_explicit( (string) $get_theme_option( 'crb_podcast_explicit', 'false' ), 'false' );
+		$channel_language_raw      = (string) $get_theme_option( 'crb_podcast_language', ( get_bloginfo( 'language' ) ?: 'en-US' ) );
 		$channel_language          = $this->normalize_rss_language_iso639_1( $channel_language_raw, 'en' );
-		$channel_category_primary  = function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_category_primary' ) ?: '' ) : '';
-		$channel_category_secondary = function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_category_secondary' ) ?: '' ) : '';
-		$channel_copyright         = function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_copyright' ) ?: '' ) : '';
-		$podcast_locked            = function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_locked' ) ?: 'yes' ) : 'yes';
-		$podcast_locked_owner      = function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_locked_owner' ) ?: '' ) : '';
-		$podcast_guid              = function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_guid' ) ?: $site_url ) : $site_url;
-		$itunes_type               = function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_itunes_type' ) ?: '' ) : '';
-		$itunes_title              = function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_itunes_title' ) ?: '' ) : '';
-		$itunes_block              = function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_itunes_block' ) ?: 'no' ) : 'no';
-		$itunes_complete           = function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_itunes_complete' ) ?: 'no' ) : 'no';
-		$itunes_new_feed_url       = function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_itunes_new_feed_url' ) ?: '' ) : '';
-		$generator                 = function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_generator' ) ?: '' ) : '';
-		$apple_verify_code         = function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_apple_verify' ) ?: '' ) : '';
-		$podcast_funding           = function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_funding' ) ?: array() ) : array();
+		$channel_category_primary   = (string) $get_theme_option( 'crb_podcast_category_primary', '' );
+		$channel_category_secondary = (string) $get_theme_option( 'crb_podcast_category_secondary', '' );
+		$channel_copyright          = (string) $get_theme_option( 'crb_podcast_copyright', '' );
+		$podcast_locked             = (string) $get_theme_option( 'crb_podcast_locked', 'yes' );
+		$podcast_locked_owner       = (string) $get_theme_option( 'crb_podcast_locked_owner', '' );
+		$podcast_guid               = (string) $get_theme_option( 'crb_podcast_guid', $site_url );
+		$itunes_type                = (string) $get_theme_option( 'crb_podcast_itunes_type', '' );
+		$itunes_title               = (string) $get_theme_option( 'crb_podcast_itunes_title', '' );
+		$itunes_block               = (string) $get_theme_option( 'crb_podcast_itunes_block', 'no' );
+		$itunes_complete            = (string) $get_theme_option( 'crb_podcast_itunes_complete', 'no' );
+		$itunes_new_feed_url        = (string) $get_theme_option( 'crb_podcast_itunes_new_feed_url', '' );
+		$generator                  = (string) $get_theme_option( 'crb_podcast_generator', '' );
+		$apple_verify_code          = (string) $get_theme_option( 'crb_podcast_apple_verify', '' );
+		$podcast_funding            = (array) $get_theme_option( 'crb_podcast_funding', array() );
 
 		$query = new \WP_Query(
 			array(
