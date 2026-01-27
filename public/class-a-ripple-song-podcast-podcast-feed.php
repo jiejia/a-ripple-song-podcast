@@ -538,7 +538,7 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
 	}
 
 	/**
-	 * Format a timestamp in a strict RFC 2822-compatible string using GMT.
+	 * Format a timestamp in a strict RFC 822-style date string using UTC offset.
 	 *
 	 * @param int $timestamp
 	 * @return string
@@ -548,8 +548,8 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
 		if ( $timestamp <= 0 ) {
 			$timestamp = time();
 		}
-		// RFC 2822 "zone" is typically expected as numeric offset (e.g. +0000).
-		return gmdate( 'D, d M Y H:i:s O', $timestamp );
+		// RSS 2.0 historically references RFC 822 (2-digit year). Some validators enforce this strictly.
+		return gmdate( 'D, d M y H:i:s O', $timestamp );
 	}
 
 	/**
