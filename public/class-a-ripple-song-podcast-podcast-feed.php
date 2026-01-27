@@ -629,6 +629,60 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
 	}
 
 	/**
+	 * Ensure the channel description isn't trivially short (some validators require >= 50 chars).
+	 *
+	 * @param string $description
+	 * @param string $title
+	 * @param string $subtitle
+	 * @param string $author
+	 * @param string $feed_url
+	 * @param string $site_url
+	 * @return string
+	 */
+	private function ensure_min_channel_description( $description, $title, $subtitle, $author, $feed_url, $site_url ) {
+		$description = trim( (string) $description );
+
+		$plain = wp_strip_all_tags( $description, true );
+		$plain = html_entity_decode( (string) $plain, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+		$len   = function_exists( 'mb_strlen' ) ? (int) mb_strlen( $plain, 'UTF-8' ) : (int) strlen( $plain );
+
+		if ( $len >= 50 ) {
+			return $description;
+		}
+
+		$title    = trim( (string) $title );
+		$subtitle = trim( (string) $subtitle );
+		$author   = trim( (string) $author );
+		$feed_url = trim( (string) $feed_url );
+		$site_url = trim( (string) $site_url );
+
+		$header = $title;
+		if ( $subtitle !== '' ) {
+			$header = $title !== '' ? ( $title . ' — ' . $subtitle ) : $subtitle;
+		}
+
+		$addon_parts = array();
+		if ( $header !== '' ) {
+			$addon_parts[] = $header . '.';
+		}
+		if ( $author !== '' ) {
+			$addon_parts[] = sprintf( __( 'Hosted by %s.', 'a-ripple-song-podcast' ), $author );
+		}
+		if ( $feed_url !== '' ) {
+			$addon_parts[] = sprintf( __( 'Subscribe: %s', 'a-ripple-song-podcast' ), $feed_url );
+		} elseif ( $site_url !== '' ) {
+			$addon_parts[] = sprintf( __( 'Website: %s', 'a-ripple-song-podcast' ), $site_url );
+		}
+
+		$addon = trim( implode( ' ', $addon_parts ) );
+		if ( $addon === '' ) {
+			return $description;
+		}
+
+		return trim( $description !== '' ? ( $description . ' ' . $addon ) : $addon );
+	}
+
+	/**
 	 * Render the podcast RSS feed.
 	 */
 	public function render_feed() {
@@ -654,6 +708,15 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
 		$channel_owner_email = function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_owner_email' ) ?: get_bloginfo( 'admin_email' ) ) : get_bloginfo( 'admin_email' );
 		$channel_cover       = $this->encode_url_path_for_rss( (string) ( function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_cover' ) ?: '' ) : '' ) );
 		$default_item_image  = $channel_cover;
+
+		$channel_description = $this->ensure_min_channel_description(
+			(string) $channel_description,
+			(string) $channel_title,
+			(string) $channel_subtitle,
+			(string) $channel_author,
+			(string) $feed_url,
+			(string) $site_url
+		);
 
 		if ( $default_item_image === '' ) {
 			$site_icon = get_site_icon_url( 1400 );
@@ -712,6 +775,7 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
         <atom:link href="<?php echo esc_url( $feed_url ); ?>" rel="self" type="application/rss+xml" />
         <language><?php echo esc_html( $channel_language ); ?></language>
         <description><![CDATA[<?php echo $this->escape_cdata( (string) $channel_description ); ?>]]></description>
+        <itunes:summary><![CDATA[<?php echo $this->escape_cdata( (string) $channel_description ); ?>]]></itunes:summary>
         <itunes:subtitle><?php echo esc_html( (string) $channel_subtitle ); ?></itunes:subtitle>
         <itunes:author><?php echo esc_html( (string) $channel_author ); ?></itunes:author>
         <itunes:explicit><?php echo esc_html( (string) $channel_explicit ); ?></itunes:explicit>
