@@ -242,6 +242,7 @@ class A_Ripple_Song_Podcast_Episode_Save {
 					$this->clear_audio_meta_last_error( $post_id );
 				}
 
+				$result['mime'] = $this->normalize_audio_mime_for_url( $result['mime'], $audio_url );
 				return $result;
 			}
 
@@ -280,7 +281,40 @@ class A_Ripple_Song_Podcast_Episode_Save {
 			$this->clear_audio_meta_last_error( $post_id );
 		}
 
+		$result['mime'] = $this->normalize_audio_mime_for_url( $result['mime'], $audio_url, $file_path );
 		return $result;
+	}
+
+	/**
+	 * Normalize detected MIME type based on file extension (notably .m4a).
+	 *
+	 * Some validators expect .m4a to be declared as audio/x-m4a.
+	 *
+	 * @param string|null $mime
+	 * @param string      $audio_url
+	 * @param string      $file_path
+	 * @return string|null
+	 */
+	private function normalize_audio_mime_for_url( $mime, $audio_url, $file_path = '' ) {
+		$mime      = is_string( $mime ) ? trim( $mime ) : '';
+		$audio_url = (string) $audio_url;
+		$file_path = (string) $file_path;
+
+		$path = (string) wp_parse_url( $audio_url, PHP_URL_PATH );
+		if ( $path === '' ) {
+			$path = $audio_url;
+		}
+
+		$ext = strtolower( (string) pathinfo( $path, PATHINFO_EXTENSION ) );
+		if ( $ext === '' && $file_path !== '' ) {
+			$ext = strtolower( (string) pathinfo( $file_path, PATHINFO_EXTENSION ) );
+		}
+
+		if ( $ext === 'm4a' ) {
+			return 'audio/x-m4a';
+		}
+
+		return $mime !== '' ? $mime : null;
 	}
 
 	/**

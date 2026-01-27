@@ -512,6 +512,65 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
 	}
 
 	/**
+	 * Normalize the RSS 2.0 <language> value to ISO 639-1 (two-letter) code.
+	 *
+	 * Some feed validators incorrectly require ISO 639-1 instead of RFC 1766/BCP47.
+	 * Example: "en-US" => "en".
+	 *
+	 * @param mixed  $value
+	 * @param string $fallback
+	 * @return string
+	 */
+	private function normalize_rss_language_iso639_1( $value, $fallback = 'en' ) {
+		$raw = strtolower( trim( (string) $value ) );
+		if ( $raw === '' ) {
+			return $fallback;
+		}
+
+		$raw = str_replace( '_', '-', $raw );
+		$primary = explode( '-', $raw )[0] ?? '';
+
+		if ( preg_match( '/^[a-z]{2}$/', $primary ) ) {
+			return $primary;
+		}
+
+		return $fallback;
+	}
+
+	/**
+	 * Format a timestamp in a strict RFC 2822-compatible string using GMT.
+	 *
+	 * @param int $timestamp
+	 * @return string
+	 */
+	private function format_rfc2822_gmt( $timestamp ) {
+		$timestamp = (int) $timestamp;
+		if ( $timestamp <= 0 ) {
+			$timestamp = time();
+		}
+		return gmdate( 'D, d M Y H:i:s \\G\\M\\T', $timestamp );
+	}
+
+	/**
+	 * Normalize enclosure MIME type based on URL/path.
+	 *
+	 * @param string $audio_url
+	 * @param string $audio_mime
+	 * @return string
+	 */
+	private function normalize_enclosure_mime( $audio_url, $audio_mime ) {
+		$audio_mime = trim( (string) $audio_mime );
+		$path       = (string) wp_parse_url( (string) $audio_url, PHP_URL_PATH );
+		$ext        = strtolower( pathinfo( $path, PATHINFO_EXTENSION ) );
+
+		if ( $ext === 'm4a' ) {
+			return 'audio/x-m4a';
+		}
+
+		return $audio_mime;
+	}
+
+	/**
 	 * Format seconds to HH:MM:SS.
 	 *
 	 * @param int $seconds
@@ -603,7 +662,8 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
 		}
 
 		$channel_explicit          = $this->normalize_itunes_explicit( function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_explicit' ) ?: 'false' ) : 'false', 'false' );
-		$channel_language          = function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_language' ) ?: ( get_bloginfo( 'language' ) ?: 'en-US' ) ) : ( get_bloginfo( 'language' ) ?: 'en-US' );
+		$channel_language_raw      = function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_language' ) ?: ( get_bloginfo( 'language' ) ?: 'en-US' ) ) : ( get_bloginfo( 'language' ) ?: 'en-US' );
+		$channel_language          = $this->normalize_rss_language_iso639_1( $channel_language_raw, 'en' );
 		$channel_category_primary  = function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_category_primary' ) ?: '' ) : '';
 		$channel_category_secondary = function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_category_secondary' ) ?: '' ) : '';
 		$channel_copyright         = function_exists( 'carbon_get_theme_option' ) ? ( carbon_get_theme_option( 'crb_podcast_copyright' ) ?: '' ) : '';
@@ -629,12 +689,12 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
 			)
 		);
 
-		$last_build_date = gmdate( 'r' );
+		$last_build_date = $this->format_rfc2822_gmt( time() );
 		if ( ! empty( $query->posts ) ) {
 			$latest_post_id = (int) $query->posts[0]->ID;
-			$latest_mysql   = get_post_time( 'Y-m-d H:i:s', true, $latest_post_id, false );
-			if ( is_string( $latest_mysql ) && $latest_mysql !== '' ) {
-				$last_build_date = mysql2date( 'r', $latest_mysql, false );
+			$latest_ts      = (int) get_post_time( 'U', true, $latest_post_id, false );
+			if ( $latest_ts > 0 ) {
+				$last_build_date = $this->format_rfc2822_gmt( $latest_ts );
 			}
 		}
 
@@ -736,14 +796,15 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
 
 				$audio_url       = $this->encode_url_path_for_rss( $this->resolve_media_url( $post_id, 'audio_file' ) );
 				$audio_length    = (string) $this->get_episode_meta_value( $post_id, 'audio_length', '' );
-				$audio_mime      = (string) $this->get_episode_meta_value( $post_id, 'audio_mime', '' );
+				$audio_mime_raw  = (string) $this->get_episode_meta_value( $post_id, 'audio_mime', '' );
 				$duration        = (int) $this->get_episode_meta_value( $post_id, 'duration', 0 );
-				$duration_formatted = $duration > 0 ? $this->format_duration( $duration ) : '';
+				$duration_seconds = $duration > 0 ? (string) $duration : '';
 
-				$episode_explicit = (string) $this->get_episode_meta_value( $post_id, 'episode_explicit', '' );
+				$episode_explicit_raw = (string) $this->get_episode_meta_value( $post_id, 'episode_explicit', '' );
+				$episode_explicit     = $this->normalize_itunes_explicit( $episode_explicit_raw, (string) $channel_explicit );
 				$episode_type     = (string) $this->get_episode_meta_value( $post_id, 'episode_type', '' );
-				$episode_number   = (string) $this->get_episode_meta_value( $post_id, 'episode_number', '' );
-				$season_number    = (string) $this->get_episode_meta_value( $post_id, 'season_number', '' );
+				$episode_number   = (int) $this->get_episode_meta_value( $post_id, 'episode_number', 0 );
+				$season_number    = (int) $this->get_episode_meta_value( $post_id, 'season_number', 0 );
 				$episode_author   = (string) $this->get_episode_meta_value( $post_id, 'episode_author', '' );
 				if ( $episode_author === '' ) {
 					$episode_author = (string) $channel_author;
@@ -778,7 +839,9 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
 
 				$content_html = apply_filters( 'the_content', get_the_content( null, false, $post_id ) );
 				$content_html = str_replace( ']]>', ']]]]><![CDATA[>', (string) $content_html );
-				$pub_date     = mysql2date( 'r', get_post_time( 'Y-m-d H:i:s', true, $post_id ), false );
+				$pub_ts       = (int) get_post_time( 'U', true, $post_id, false );
+				$pub_date     = $this->format_rfc2822_gmt( $pub_ts );
+				$audio_mime   = $this->normalize_enclosure_mime( (string) $audio_url, (string) $audio_mime_raw );
 				?>
         <item>
             <title><?php echo esc_html( get_the_title() ); ?></title>
@@ -793,10 +856,10 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
             <?php if ( $audio_url ) : ?>
             <enclosure url="<?php echo esc_url( $audio_url ); ?>" length="<?php echo esc_attr( $audio_length ); ?>" type="<?php echo esc_attr( $audio_mime ); ?>" />
             <?php endif; ?>
-            <?php if ( $duration_formatted ) : ?>
-            <itunes:duration><?php echo esc_html( $duration_formatted ); ?></itunes:duration>
+            <?php if ( $duration_seconds ) : ?>
+            <itunes:duration><?php echo esc_html( $duration_seconds ); ?></itunes:duration>
             <?php endif; ?>
-            <itunes:explicit><?php echo esc_html( $episode_explicit ? $episode_explicit : ( $channel_explicit ? $channel_explicit : 'false' ) ); ?></itunes:explicit>
+            <itunes:explicit><?php echo esc_html( $episode_explicit ); ?></itunes:explicit>
             <itunes:author><?php echo esc_html( $episode_author ); ?></itunes:author>
             <?php if ( $episode_itunes_title !== '' ) : ?>
             <itunes:title><?php echo esc_html( (string) $episode_itunes_title ); ?></itunes:title>
@@ -852,10 +915,10 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
 					endforeach;
 				endif;
 				?>
-            <?php if ( $episode_number !== '' ) : ?>
+            <?php if ( $episode_number > 0 ) : ?>
             <itunes:episode><?php echo esc_html( (int) $episode_number ); ?></itunes:episode>
             <?php endif; ?>
-            <?php if ( $season_number !== '' ) : ?>
+            <?php if ( $season_number > 0 ) : ?>
             <itunes:season><?php echo esc_html( (int) $season_number ); ?></itunes:season>
             <?php endif; ?>
             <itunes:episodeType><?php echo esc_html( $episode_type ? $episode_type : 'full' ); ?></itunes:episodeType>
