@@ -6,10 +6,5 @@
 # Node (if introduced later)
 /node_modules/
 
-# IDE / OS
-.DS_Store
-.idea/
-.vscode/
-
 # Test / tooling caches
 .phpunit.result.cache
