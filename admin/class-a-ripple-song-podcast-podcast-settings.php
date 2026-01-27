@@ -283,7 +283,7 @@ class A_Ripple_Song_Podcast_Podcast_Settings {
 			return $save;
 		}
 
-		$validation_result = $this->validate_cover_image( (string) $value );
+		$validation_result = $this->validate_cover_image( $value );
 
 		if ( is_wp_error( $validation_result ) ) {
 			$user_id = get_current_user_id();
@@ -332,7 +332,7 @@ class A_Ripple_Song_Podcast_Podcast_Settings {
 			return $result;
 		}
 
-		$validation_result = $this->validate_cover_image( (string) $cover_url );
+		$validation_result = $this->validate_cover_image( $cover_url );
 		if ( is_wp_error( $validation_result ) ) {
 			return new \WP_Error(
 				'podcast_cover_validation_failed',
@@ -354,8 +354,11 @@ class A_Ripple_Song_Podcast_Podcast_Settings {
 		$field_keys = array( '_crb_podcast_cover', 'crb_podcast_cover' );
 
 		foreach ( $field_keys as $key ) {
-			if ( isset( $data[ $key ] ) && is_string( $data[ $key ] ) && $data[ $key ] !== '' ) {
-				return $data[ $key ];
+			if ( isset( $data[ $key ] ) ) {
+				$normalized = $this->normalize_cover_url_from_value( $data[ $key ] );
+				if ( null !== $normalized ) {
+					return $normalized;
+				}
 			}
 		}
 
@@ -365,8 +368,11 @@ class A_Ripple_Song_Podcast_Podcast_Settings {
 					continue;
 				}
 				$name = $field['name'] ?? ( $field['base_name'] ?? ( $field['field_name'] ?? '' ) );
-				if ( in_array( $name, $field_keys, true ) && isset( $field['value'] ) ) {
-					return (string) $field['value'];
+				if ( in_array( $name, $field_keys, true ) && array_key_exists( 'value', $field ) ) {
+					$normalized = $this->normalize_cover_url_from_value( $field['value'] );
+					if ( null !== $normalized ) {
+						return $normalized;
+					}
 				}
 			}
 		}
@@ -410,6 +416,11 @@ class A_Ripple_Song_Podcast_Podcast_Settings {
 	 * @return true|\WP_Error
 	 */
 	public function validate_cover_image( $url ) {
+		$url = $this->normalize_cover_url_from_value( $url );
+		if ( null === $url ) {
+			return new \WP_Error( 'invalid_url', __( 'Podcast Cover URL is invalid.', 'a-ripple-song-podcast' ) );
+		}
+
 		$max_bytes      = 512 * 1024;
 		$min_dimension  = 1400;
 		$max_dimension  = 3000;
@@ -428,12 +439,95 @@ class A_Ripple_Song_Podcast_Podcast_Settings {
 	}
 
 	/**
+	 * Normalize a cover "value" to a usable URL string.
+	 *
+	 * Carbon Fields can submit either attachment IDs or URLs depending on the field configuration.
+	 * This also normalizes protocol-relative and root-relative URLs.
+	 *
+	 * @param mixed $value
+	 * @return string|null
+	 */
+	private function normalize_cover_url_from_value( $value ) {
+		if ( is_array( $value ) ) {
+			foreach ( array( 'url', 'file_url', 'value', 'src' ) as $key ) {
+				if ( isset( $value[ $key ] ) && is_string( $value[ $key ] ) ) {
+					$normalized = $this->normalize_cover_url_from_value( $value[ $key ] );
+					if ( null !== $normalized ) {
+						return $normalized;
+					}
+				}
+			}
+
+			foreach ( array( 'id', 'attachment_id' ) as $key ) {
+				if ( isset( $value[ $key ] ) ) {
+					$normalized = $this->normalize_cover_url_from_value( $value[ $key ] );
+					if ( null !== $normalized ) {
+						return $normalized;
+					}
+				}
+			}
+
+			return null;
+		}
+
+		if ( is_int( $value ) || ( is_string( $value ) && ctype_digit( $value ) ) ) {
+			$attachment_id = (int) $value;
+			if ( $attachment_id > 0 ) {
+				$url = wp_get_attachment_url( $attachment_id );
+				if ( is_string( $url ) && $url !== '' ) {
+					return $this->normalize_cover_url_from_value( $url );
+				}
+			}
+			return null;
+		}
+
+		if ( ! is_string( $value ) ) {
+			return null;
+		}
+
+		$url = trim( $value );
+		if ( $url === '' ) {
+			return null;
+		}
+
+		// Accept protocol-relative URLs.
+		if ( strpos( $url, '//' ) === 0 ) {
+			$url = ( is_ssl() ? 'https:' : 'http:' ) . $url;
+		}
+
+		// Accept root-relative URLs (e.g. /wp-content/uploads/...).
+		if ( strpos( $url, '/' ) === 0 && strpos( $url, '//' ) !== 0 ) {
+			$url = home_url( $url );
+		}
+
+		return $url;
+	}
+
+	/**
 	 * Try to resolve URL to a local file path.
 	 *
 	 * @param string $url
 	 * @return string|null
 	 */
 	private function resolve_local_file_path( $url ) {
+		if ( function_exists( 'attachment_url_to_postid' ) ) {
+			$url_for_id = $url;
+			if ( strpos( $url_for_id, '?' ) !== false ) {
+				$url_for_id = (string) preg_replace( '~\\?.*$~', '', $url_for_id );
+			}
+
+			$attachment_id = attachment_url_to_postid( $url_for_id );
+			if ( $attachment_id ) {
+				$attached_file = get_attached_file( $attachment_id );
+				if ( is_string( $attached_file ) && $attached_file !== '' ) {
+					$attached_file_real = realpath( $attached_file );
+					if ( $attached_file_real !== false ) {
+						return wp_normalize_path( $attached_file_real );
+					}
+				}
+			}
+		}
+
 		$upload_dir   = wp_get_upload_dir();
 		$basedir      = isset( $upload_dir['basedir'] ) ? (string) $upload_dir['basedir'] : '';
 		$basedir_real = $basedir !== '' ? realpath( $basedir ) : false;
