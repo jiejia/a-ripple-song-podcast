@@ -1,15 +1,15 @@
-[English](README.en_US.md) | [简体中文](README.zh_CN.md) | [繁體中文](README.zh_TW.md) | [繁體中文（香港）](README.zh_HK.md) | [日本語](README.ja.md) | [한국어](README.ko_KR.md) | [Français](README.fr_FR.md) | [Español](README.es_ES.md) | [Português (Brasil)](README.pt_BR.md) | [Русский](README.ru_RU.md) | [हिन्दी](README.hi_IN.md) | [বাংলা](README.bn_BD.md) | [العربية](README.ar.md) | [اردو](README.ur.md)
+[English](../README.md) | [简体中文](README.zh_CN.md) | [繁體中文](README.zh_TW.md) | [日本語](README.ja.md) | [한국어](README.ko_KR.md) | [Français](README.fr_FR.md) | [Español](README.es_ES.md) | [Português (Brasil)](README.pt_BR.md) | [Русский](README.ru_RU.md) | [हिन्दी](README.hi_IN.md) | [বাংলা](README.bn_BD.md) | [العربية](README.ar.md) | [اردو](README.ur.md)
 
 # A Ripple Song Podcast
 
-- Contributors: jiejia
-- Donate link: https://github.com/jiejia/
-- Tags: podcast, rss, feed, itunes, apple podcasts, spotify, podcasting 2.0, custom post type, carbon fields
-- Requires at least: WordPress 5.0
-- Tested up to: WordPress 6.9
-- Requires PHP: 7.4
-- Stable tag: 0.5.0-beta
-- License: GPLv2 or later
+- 貢献者: jiejia
+- 寄付リンク: https://github.com/jiejia/
+- タグ: podcast, rss, feed, itunes, apple podcasts, spotify, podcasting 2.0, custom post type, carbon fields
+- 最低必須バージョン: WordPress 5.0
+- テスト済み: WordPress 6.9
+- 必要PHPバージョン: 7.4
+- 安定版タグ: 0.5.0-beta
+- ライセンス: GPLv2 or later
 
 A Ripple Song テーマ向けの Podcast RSS（`/feed/podcast`）と Episode カスタム投稿タイプ。iTunes / Podcasting 2.0 タグに対応。
 
@@ -83,4 +83,3 @@ A Ripple Song テーマ向けの Podcast RSS（`/feed/podcast`）と Episode カ
 ### 0.5.0-beta
 
 ベータ版リリース。
-

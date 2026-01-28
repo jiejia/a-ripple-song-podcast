@@ -1,4 +1,4 @@
-[English](README.en_US.md) | [简体中文](README.zh_CN.md) | [繁體中文](README.zh_TW.md) | [繁體中文（香港）](README.zh_HK.md) | [日本語](README.ja.md) | [한국어](README.ko_KR.md) | [Français](README.fr_FR.md) | [Español](README.es_ES.md) | [Português (Brasil)](README.pt_BR.md) | [Русский](README.ru_RU.md) | [हिन्दी](README.hi_IN.md) | [বাংলা](README.bn_BD.md) | [العربية](README.ar.md) | [اردو](README.ur.md)
+[English](README.md) | [简体中文](docs/README.zh_CN.md) | [繁體中文](docs/README.zh_TW.md) | [日本語](docs/README.ja.md) | [한국어](docs/README.ko_KR.md) | [Français](docs/README.fr_FR.md) | [Español](docs/README.es_ES.md) | [Português (Brasil)](docs/README.pt_BR.md) | [Русский](docs/README.ru_RU.md) | [हिन्दी](docs/README.hi_IN.md) | [বাংলা](docs/README.bn_BD.md) | [العربية](docs/README.ar.md) | [اردو](docs/README.ur.md)
 
 # A Ripple Song Podcast
 
@@ -23,15 +23,15 @@ This plugin adds podcast functionality for the “A Ripple Song” theme/site: m
 - Taxonomy: Episode Categories (`ars_episode_category`), plus support for core tags (`post_tag`)
 - Podcast RSS feed: `/feed/podcast/` (or `?feed=podcast` if permalinks are disabled)
 - Channel-level settings page: Admin menu `A Ripple Song` → `Podcast Settings`
-    - Common fields: Title / Subtitle / Description / Author / Owner / Language / Cover / Categories
-    - iTunes: `itunes:type`, `itunes:block`, `itunes:complete`, `itunes:new-feed-url`, optional iTunes Title
-    - Podcasting 2.0: `podcast:locked`, `podcast:guid`, `podcast:txt` (Apple verify code), `podcast:funding`
+  - Common fields: Title / Subtitle / Description / Author / Owner / Language / Cover / Categories
+  - iTunes: `itunes:type`, `itunes:block`, `itunes:complete`, `itunes:new-feed-url`, optional iTunes Title
+  - Podcasting 2.0: `podcast:locked`, `podcast:guid`, `podcast:txt` (Apple verify code), `podcast:funding`
 - Episode-level fields (Carbon Fields meta):
-    - Audio URL (Media Library picker or manual URL); on save auto-fills `duration/length/mime` (via getID3)
-    - clean/explicit, episodeType (full/trailer/bonus), episode/season number
-    - Episode cover, per-episode author override, iTunes Title, Subtitle, Summary, Custom GUID, iTunes Block
-    - Podcasting 2.0: Transcript (`podcast:transcript`), Chapters (`podcast:chapters`), Soundbites (`podcast:soundbite`)
-    - Members/Guests: outputs as `podcast:person` entries
+  - Audio URL (Media Library picker or manual URL); on save auto-fills `duration/length/mime` (via getID3)
+  - clean/explicit, episodeType (full/trailer/bonus), episode/season number
+  - Episode cover, per-episode author override, iTunes Title, Subtitle, Summary, Custom GUID, iTunes Block
+  - Podcasting 2.0: Transcript (`podcast:transcript`), Chapters (`podcast:chapters`), Soundbites (`podcast:soundbite`)
+  - Members/Guests: outputs as `podcast:person` entries
 - REST API: registers/exposes selected episode meta for theme/front-end consumption
 - Upload support: allows `mp3` / `m4a` uploads; enhances URL fields with upload/download/remove UI
 
@@ -83,4 +83,3 @@ No. Carbon Fields is bundled via Composer and booted on `after_setup_theme`.
 ### 0.5.0-beta
 
 Beta release.
-
