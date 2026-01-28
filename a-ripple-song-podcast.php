@@ -3,24 +3,26 @@
 /**
  * The plugin bootstrap file
  *
- * This file is read by WordPress to generate the plugin information in the plugin
- * admin area. This file also includes all of the dependencies used by the plugin,
- * registers the activation and deactivation functions, and defines a function
- * that starts the plugin.
+ * This file is read by WordPress to generate plugin information in the admin area.
  *
- * @link              https://github.com/jiejia
- * @since             1.0.0
+ * It loads dependencies, registers activation/deactivation hooks, and boots the
+ * plugin (custom post type + podcast RSS feed + admin settings).
+ *
+ * @link              https://github.com/jiejia/a-ripple-song-podcast
+ * @since             0.5.0
  * @package           A_Ripple_Song_Podcast
  *
  * @wordpress-plugin
  * Plugin Name:       A Ripple Song Podcast
  * Plugin URI:        https://github.com/jiejia/a-ripple-song-podcast
- * Description:       a WordPress podcast plugin for A Ripple Song theme
- * Version:           1.0.0
+ * Description:       Podcast features for the A Ripple Song theme: Episode CPT + /feed/podcast RSS (iTunes & Podcasting 2.0 tags).
+ * Version:           0.5.0-beta
  * Author:            jiejia
  * Author URI:        https://github.com/jiejia/
  * License:           GPL-2.0+
- * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
+ * License URI:       http://www.gnu.org/licenses/gpl-3.0.txt
+ * Requires at least: 5.0
+ * Requires PHP:      7.4
  * Text Domain:       a-ripple-song-podcast
  * Domain Path:       /languages
  */
@@ -32,10 +34,10 @@ if ( ! defined( 'WPINC' ) ) {
 
 /**
  * Currently plugin version.
- * Start at version 1.0.0 and use SemVer - https://semver.org
+ * Start at version 0.5.0-beta and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'A_RIPPLE_SONG_PODCAST_VERSION', '1.0.0' );
+define( 'A_RIPPLE_SONG_PODCAST_VERSION', '0.5.0-beta' );
 
 $autoload = __DIR__ . '/vendor/autoload.php';
 $scoper_autoload = __DIR__ . '/vendor/scoper-autoload.php';

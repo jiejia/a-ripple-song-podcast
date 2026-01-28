@@ -1,114 +1,81 @@
-=== Plugin Name ===
-Contributors: (this should be a list of wordpress.org userid's)
+=== A Ripple Song Podcast ===
+Contributors: jiejia
 Donate link: https://github.com/jiejia/
-Tags: comments, spam
-Requires at least: 3.0.1
-Tested up to: 3.4
-Stable tag: 4.3
+Tags: podcast, rss, feed, itunes, apple podcasts, spotify, podcasting 2.0, custom post type, carbon fields
+Requires at least: 5.0
+Tested up to: 6.9
+Requires PHP: 7.4
+Stable tag: 0.5.0-beta
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Here is a short description of the plugin.  This should be no more than 150 characters.  No markup here.
+Podcast RSS feed (/feed/podcast) + Episode CPT for the A Ripple Song theme, with iTunes & Podcasting 2.0 support.
 
 == Description ==
 
-This is the long description.  No limit, and you can use Markdown (as well as in the following sections).
+This plugin adds podcast functionality for the “A Ripple Song” theme/site: manage episodes via a custom post type and generate a podcast RSS feed suitable for Apple Podcasts / Spotify and other directories.
 
-For backwards compatibility, if this section is missing, the full length of the short description will be used, and
-Markdown parsed.
+Key features:
 
-A few notes about the sections above:
+* Custom post type: Episode (`ars_episode`), archive slug defaults to `/podcasts/`
+* Taxonomy: Episode Categories (`ars_episode_category`), plus support for core tags (`post_tag`)
+* Podcast RSS feed: `/feed/podcast/` (or `?feed=podcast` if permalinks are disabled)
+* Channel-level settings page: Admin menu `A Ripple Song` → `Podcast Settings`
+  * Common fields: Title / Subtitle / Description / Author / Owner / Language / Cover / Categories
+  * iTunes: `itunes:type`, `itunes:block`, `itunes:complete`, `itunes:new-feed-url`, optional iTunes Title
+  * Podcasting 2.0: `podcast:locked`, `podcast:guid`, `podcast:txt` (Apple verify code), `podcast:funding`
+* Episode-level fields (Carbon Fields meta):
+  * Audio URL (Media Library picker or manual URL); on save auto-fills `duration/length/mime` (via getID3)
+  * clean/explicit, episodeType (full/trailer/bonus), episode/season number
+  * Episode cover, per-episode author override, iTunes Title, Subtitle, Summary, Custom GUID, iTunes Block
+  * Podcasting 2.0: Transcript (`podcast:transcript`), Chapters (`podcast:chapters`), Soundbites (`podcast:soundbite`)
+  * Members/Guests: outputs as `podcast:person` entries
+* REST API: registers/exposes selected episode meta for theme/front-end consumption
+* Upload support: allows `mp3` / `m4a` uploads; enhances URL fields with upload/download/remove UI
 
-*   "Contributors" is a comma separated list of wp.org/wp-plugins.org usernames
-*   "Tags" is a comma separated list of tags that apply to the plugin
-*   "Requires at least" is the lowest version that the plugin will work on
-*   "Tested up to" is the highest version that you've *successfully used to test the plugin*. Note that it might work on
-higher versions... this is just the highest one you've verified.
-*   Stable tag should indicate the Subversion "tag" of the latest stable version, or "trunk," if you use `/trunk/` for
-stable.
+Notes:
 
-    Note that the `readme.txt` of the stable tag is the one that is considered the defining one for the plugin, so
-if the `/trunk/readme.txt` file says that the stable tag is `4.3`, then it is `/tags/4.3/readme.txt` that'll be used
-for displaying information about the plugin.  In this situation, the only thing considered from the trunk `readme.txt`
-is the stable tag pointer.  Thus, if you develop in trunk, you can update the trunk `readme.txt` to reflect changes in
-your in-development version, without having that information incorrectly disclosed about the current stable version
-that lacks those changes -- as long as the trunk's `readme.txt` points to the correct stable tag.
-
-    If no stable tag is provided, it is assumed that trunk is stable, but you should specify "trunk" if that's where
-you put the stable version, in order to eliminate any doubt.
+* Carbon Fields is bundled via Composer `vendor/` (no separate Carbon Fields plugin required).
+* The feed depends on rewrite rules; activation typically flushes rules, but if you get a 404, visit “Settings → Permalinks” and click “Save”.
 
 == Installation ==
 
-This section describes how to install the plugin and get it working.
-
-e.g.
-
-1. Upload `a-ripple-song-podcast.php` to the `/wp-content/plugins/` directory
-1. Activate the plugin through the 'Plugins' menu in WordPress
-1. Place `<?php do_action('plugin_name_hook'); ?>` in your templates
+1. Upload the `a-ripple-song-podcast` plugin folder to `/wp-content/plugins/` (or install the ZIP via WP Admin)
+2. Activate the plugin in WP Admin
+3. Go to `A Ripple Song` → `Podcast Settings` and fill in channel metadata (title, description, author, cover, etc.)
+4. Create an Episode: `ARS Episodes` → `Add New Episode`, then fill in the “Episode Details” meta box (audio + metadata)
+5. Open the feed at `/feed/podcast/` (or `?feed=podcast`) and submit it to podcast directories
 
 == Frequently Asked Questions ==
 
-= A question that someone might have =
+= What is the RSS URL? =
 
-An answer to that question.
+By default it’s `https://your-site.example/feed/podcast/`. If permalinks are disabled, use `https://your-site.example/?feed=podcast`.
 
-= What about foo bar? =
+= Why does /feed/podcast/ return 404 or redirect? =
 
-Answer to foo bar dilemma.
+Usually rewrite rules haven’t been flushed. Go to “Settings → Permalinks” and click “Save”. The plugin also attempts a one-time admin-side flush.
+
+= Why aren’t duration/size auto-filled? =
+
+On Episode save, the plugin uses getID3 to analyze the audio. For remote URLs, it may download a temporary file first; ensure the URL is reachable by the server and allow enough time. Use the `ars_episode_audio_meta_download_timeout` filter to adjust the download timeout (default: 300 seconds).
+
+= Do I need to install the Carbon Fields plugin? =
+
+No. Carbon Fields is bundled via Composer and booted on `after_setup_theme`.
 
 == Screenshots ==
 
-1. This screen shot description corresponds to screenshot-1.(png|jpg|jpeg|gif). Note that the screenshot is taken from
-the /assets directory or the directory that contains the stable readme.txt (tags or trunk). Screenshots in the /assets
-directory take precedence. For example, `/assets/screenshot-1.png` would win over `/tags/4.3/screenshot-1.png`
-(or jpg, jpeg, gif).
-2. This is the second screen shot
+1. `A Ripple Song` → `Podcast Settings` (channel settings)
+2. “Episode Details” meta box on the `ARS Episodes` edit screen
+3. `/feed/podcast/` RSS output (includes iTunes / Podcasting 2.0 tags)
 
 == Changelog ==
 
-= 1.0 =
-* A change since the previous version.
-* Another change.
-
-= 0.5 =
-* List versions from most recent at top to oldest at bottom.
+= 0.5.0-beta =
+* Beta release: Episode CPT + Podcast RSS feed + admin settings and episode meta fields.
 
 == Upgrade Notice ==
 
-= 1.0 =
-Upgrade notices describe the reason a user should upgrade.  No more than 300 characters.
-
-= 0.5 =
-This version fixes a security related bug.  Upgrade immediately.
-
-== Arbitrary section ==
-
-You may provide arbitrary sections, in the same format as the ones above.  This may be of use for extremely complicated
-plugins where more information needs to be conveyed that doesn't fit into the categories of "description" or
-"installation."  Arbitrary sections will be shown below the built-in sections outlined above.
-
-== A brief Markdown Example ==
-
-Ordered list:
-
-1. Some feature
-1. Another feature
-1. Something else about the plugin
-
-Unordered list:
-
-* something
-* something else
-* third thing
-
-Here's a link to [WordPress](http://wordpress.org/ "Your favorite software") and one to [Markdown's Syntax Documentation][markdown syntax].
-Titles are optional, naturally.
-
-[markdown syntax]: http://daringfireball.net/projects/markdown/syntax
-            "Markdown is what the parser uses to process much of the readme file"
-
-Markdown uses email style notation for blockquotes and I've been told:
-> Asterisks for *emphasis*. Double it up  for **strong**.
-
-`<?php code(); // goes in backticks ?>`
+= 0.5.0-beta =
+Beta release.
