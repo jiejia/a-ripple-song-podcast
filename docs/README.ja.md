@@ -1,19 +1,44 @@
-[English](../README.md) | [简体中文](README.zh_CN.md) | [繁體中文](README.zh-Hant.md) | [日本語](README.ja.md) | [한국어](README.ko_KR.md) | [Français](README.fr_FR.md) | [Español](README.es_ES.md) | [Português (Brasil)](README.pt_BR.md) | [Русский](README.ru_RU.md) | [हिन्दी](README.hi_IN.md) | [বাংলा](README.bn_BD.md) | [العربية](README.ar.md) | [اردو](README.ur.md)
+<p align="center">
+  <a href="../README.md">English</a> •
+  <a href="README.zh_CN.md">简体中文</a> •
+  <a href="README.zh-Hant.md">繁體中文</a> •
+  <a href="README.ja.md">日本語</a> •
+  <a href="README.ko_KR.md">한국어</a> •
+  <a href="README.fr_FR.md">Français</a> •
+  <a href="README.es_ES.md">Español</a> •
+  <a href="README.pt_BR.md">Português (Brasil)</a> •
+  <a href="README.ru_RU.md">Русский</a> •
+  <a href="README.hi_IN.md">हिन्दी</a> •
+  <a href="README.bn_BD.md">বাংলা</a> •
+  <a href="README.ar.md">العربية</a> •
+  <a href="README.ur.md">اردو</a>
+</p>
+
+<p align="center">
+  <img alt="A Ripple Song Podcast" src="https://img.shields.io/badge/A%20Ripple%20Song%20Podcast-0.5.0--beta-6366f1?style=for-the-badge&logo=wordpress&logoColor=white" height="40">
+</p>
+
+<h3 align="center">ポッドキャスト RSS 用 WordPress プラグイン</h3>
+
+<p align="center">
+  <a href="https://doc-podcast.aripplesong.me/docs/intro">📖 チュートリアル</a> •
+  <a href="https://doc-podcast.aripplesong.me/blog">📝 ブログ</a> •
+  <a href="https://github.com/jiejia/a-ripple-song-podcast">⭐ GitHub</a>
+</p>
+
+<p align="center">
+  <img alt="PHP" src="https://img.shields.io/badge/PHP-7.4+-777BB4?style=flat-square&logo=php&logoColor=white">
+  <img alt="WordPress" src="https://img.shields.io/badge/WordPress-5.0+-21759B?style=flat-square&logo=wordpress&logoColor=white">
+  <img alt="License" src="https://img.shields.io/badge/License-GPLv2%2B-blue?style=flat-square">
+</p>
+
+---
 
 # A Ripple Song Podcast
 
-- 貢献者: jiejia
-- 寄付リンク: https://github.com/jiejia/
-- タグ: podcast, rss, feed, itunes, apple podcasts, spotify, podcasting 2.0, custom post type, carbon fields
-- 最低必須バージョン: WordPress 5.0
-- テスト済み: WordPress 6.9
-- 必要PHPバージョン: 7.4
-- 安定版タグ: 0.5.0-beta
-- ライセンス: GPLv2 or later
+> A Ripple Song テーマ向けの Podcast RSS（`/feed/podcast`）と Episode カスタム投稿タイプ。iTunes / Podcasting 2.0 タグに対応。
 
-A Ripple Song テーマ向けの Podcast RSS（`/feed/podcast`）と Episode カスタム投稿タイプ。iTunes / Podcasting 2.0 タグに対応。
-
-## 説明
+## ✨ 説明
 
 このプラグインは「A Ripple Song」テーマ/サイトにポッドキャスト機能を追加します。カスタム投稿タイプでエピソードを管理し、Apple Podcasts / Spotify などに提出できる Podcast RSS フィードを生成します。
 
@@ -40,7 +65,7 @@ A Ripple Song テーマ向けの Podcast RSS（`/feed/podcast`）と Episode カ
 - Carbon Fields は Composer の `vendor/` に同梱（Carbon Fields プラグインの別途インストール不要）。
 - フィードはリライトルールに依存します。通常は有効化時にフラッシュされますが、404 の場合は「設定 → パーマリンク設定」で「変更を保存」をクリックしてください。
 
-## インストール
+## 🚀 インストール
 
 1. `a-ripple-song-podcast` フォルダを `/wp-content/plugins/` にアップロード（または管理画面で ZIP をインストール）
 2. 管理画面でプラグインを有効化
@@ -48,7 +73,7 @@ A Ripple Song テーマ向けの Podcast RSS（`/feed/podcast`）と Episode カ
 4. `ARS Episodes` → `Add New Episode` でエピソードを作成し、“Episode Details” に音声とメタ情報を入力
 5. `/feed/podcast/`（または `?feed=podcast`）を開き、各ポッドキャストディレクトリへ提出
 
-## よくある質問
+## ❓ よくある質問
 
 ### RSS URL は？
 
@@ -66,19 +91,19 @@ A Ripple Song テーマ向けの Podcast RSS（`/feed/podcast`）と Episode カ
 
 不要です。Carbon Fields は同梱され、`after_setup_theme` で起動します。
 
-## スクリーンショット
+## 🖼️ スクリーンショット
 
 1. `A Ripple Song` → `Podcast Settings`（チャンネル設定）
 2. `ARS Episodes` 編集画面の “Episode Details” メタボックス
 3. `/feed/podcast/` の RSS 出力（iTunes / Podcasting 2.0 タグ含む）
 
-## 変更履歴
+## 📝 変更履歴
 
 ### 0.5.0-beta
 
 - ベータ版リリース：Episode CPT + Podcast RSS フィード + 管理画面設定 + エピソードメタ項目。
 
-## アップグレード通知
+## 🔔 アップグレード通知
 
 ### 0.5.0-beta
 

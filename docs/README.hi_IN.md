@@ -1,19 +1,44 @@
-[English](../README.md) | [简体中文](README.zh_CN.md) | [繁體中文](README.zh-Hant.md) | [日本語](README.ja.md) | [한국어](README.ko_KR.md) | [Français](README.fr_FR.md) | [Español](README.es_ES.md) | [Português (Brasil)](README.pt_BR.md) | [Русский](README.ru_RU.md) | [हिन्दी](README.hi_IN.md) | [বাংলा](README.bn_BD.md) | [العربية](README.ar.md) | [اردو](README.ur.md)
+<p align="center">
+  <a href="../README.md">English</a> •
+  <a href="README.zh_CN.md">简体中文</a> •
+  <a href="README.zh-Hant.md">繁體中文</a> •
+  <a href="README.ja.md">日本語</a> •
+  <a href="README.ko_KR.md">한국어</a> •
+  <a href="README.fr_FR.md">Français</a> •
+  <a href="README.es_ES.md">Español</a> •
+  <a href="README.pt_BR.md">Português (Brasil)</a> •
+  <a href="README.ru_RU.md">Русский</a> •
+  <a href="README.hi_IN.md">हिन्दी</a> •
+  <a href="README.bn_BD.md">বাংলা</a> •
+  <a href="README.ar.md">العربية</a> •
+  <a href="README.ur.md">اردو</a>
+</p>
+
+<p align="center">
+  <img alt="A Ripple Song Podcast" src="https://img.shields.io/badge/A%20Ripple%20Song%20Podcast-0.5.0--beta-6366f1?style=for-the-badge&logo=wordpress&logoColor=white" height="40">
+</p>
+
+<h3 align="center">पॉडकास्ट RSS के लिए WordPress प्लगइन</h3>
+
+<p align="center">
+  <a href="https://doc-podcast.aripplesong.me/docs/intro">📖 ट्यूटोरियल</a> •
+  <a href="https://doc-podcast.aripplesong.me/blog">📝 ब्लॉग</a> •
+  <a href="https://github.com/jiejia/a-ripple-song-podcast">⭐ GitHub</a>
+</p>
+
+<p align="center">
+  <img alt="PHP" src="https://img.shields.io/badge/PHP-7.4+-777BB4?style=flat-square&logo=php&logoColor=white">
+  <img alt="WordPress" src="https://img.shields.io/badge/WordPress-5.0+-21759B?style=flat-square&logo=wordpress&logoColor=white">
+  <img alt="License" src="https://img.shields.io/badge/License-GPLv2%2B-blue?style=flat-square">
+</p>
+
+---
 
 # A Ripple Song Podcast
 
-- योगदानकर्ता: jiejia
-- दान लिंक: https://github.com/jiejia/
-- टैग: podcast, rss, feed, itunes, apple podcasts, spotify, podcasting 2.0, custom post type, carbon fields
-- न्यूनतम आवश्यक: WordPress 5.0
-- परीक्षण किया गया: WordPress 6.9
-- आवश्यक PHP: 7.4
-- स्थिर टैग: 0.5.0-beta
-- लाइसेंस: GPLv2 or later
+> A Ripple Song थीम के लिए Podcast RSS (`/feed/podcast`) + Episode CPT, iTunes और Podcasting 2.0 टैग सपोर्ट के साथ।
 
-A Ripple Song थीम के लिए Podcast RSS (`/feed/podcast`) + Episode CPT, iTunes और Podcasting 2.0 टैग सपोर्ट के साथ।
-
-## विवरण
+## ✨ विवरण
 
 यह प्लगइन “A Ripple Song” थीम/साइट के लिए पॉडकास्ट फीचर जोड़ता है: कस्टम पोस्ट टाइप के ज़रिए एपिसोड मैनेज करें और Apple Podcasts / Spotify व अन्य डायरेक्टरी के लिए उपयुक्त पॉडकास्ट RSS फ़ीड जनरेट करें।
 
@@ -40,7 +65,7 @@ A Ripple Song थीम के लिए Podcast RSS (`/feed/podcast`) + Episode
 - Carbon Fields Composer `vendor/` के जरिए bundled है (अलग Carbon Fields प्लगइन की जरूरत नहीं)।
 - फ़ीड rewrite rules पर निर्भर है; activation आमतौर पर rules flush करता है, लेकिन 404 आए तो “Settings → Permalinks” में जाकर “Save” क्लिक करें।
 
-## इंस्टॉलेशन
+## 🚀 इंस्टॉलेशन
 
 1. `a-ripple-song-podcast` प्लगइन फ़ोल्डर को `/wp-content/plugins/` में अपलोड करें (या WP Admin से ZIP इंस्टॉल करें)
 2. WP Admin में प्लगइन activate करें
@@ -48,7 +73,7 @@ A Ripple Song थीम के लिए Podcast RSS (`/feed/podcast`) + Episode
 4. एक Episode बनाएं: `ARS Episodes` → `Add New Episode`, फिर “Episode Details” meta box (audio + metadata) भरें
 5. `/feed/podcast/` (या `?feed=podcast`) खोलें और इसे podcast directories में submit करें
 
-## अक्सर पूछे जाने वाले सवाल
+## ❓ अक्सर पूछे जाने वाले सवाल
 
 ### RSS URL क्या है?
 
@@ -66,19 +91,19 @@ Episode save पर प्लगइन getID3 से audio analyze करता 
 
 नहीं। Carbon Fields bundled है और `after_setup_theme` पर boot होता है।
 
-## स्क्रीनशॉट
+## 🖼️ स्क्रीनशॉट
 
 1. `A Ripple Song` → `Podcast Settings` (चैनल सेटिंग्स)
 2. `ARS Episodes` एडिट स्क्रीन पर “Episode Details” मेटा बॉक्स
 3. `/feed/podcast/` RSS आउटपुट (iTunes / Podcasting 2.0 टैग सहित)
 
-## चेंजलॉग
+## 📝 चेंजलॉग
 
 ### 0.5.0-beta
 
 - बीटा रिलीज़: Episode CPT + Podcast RSS feed + admin settings और episode meta fields.
 
-## अपग्रेड सूचना
+## 🔔 अपग्रेड सूचना
 
 ### 0.5.0-beta
 

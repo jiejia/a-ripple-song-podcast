@@ -1,19 +1,44 @@
-[English](README.md) | [简体中文](docs/README.zh_CN.md) | [繁體中文](docs/README.zh-Hant.md) | [日本語](docs/README.ja.md) | [한국어](docs/README.ko_KR.md) | [Français](docs/README.fr_FR.md) | [Español](docs/README.es_ES.md) | [Português (Brasil)](docs/README.pt_BR.md) | [Русский](docs/README.ru_RU.md) | [हिन्दी](docs/README.hi_IN.md) | [বাংলा](docs/README.bn_BD.md) | [العربية](docs/README.ar.md) | [اردو](docs/README.ur.md)
+<p align="center">
+  <a href="./README.md">English</a> •
+  <a href="./docs/README.zh_CN.md">简体中文</a> •
+  <a href="./docs/README.zh-Hant.md">繁體中文</a> •
+  <a href="./docs/README.ja.md">日本語</a> •
+  <a href="./docs/README.ko_KR.md">한국어</a> •
+  <a href="./docs/README.fr_FR.md">Français</a> •
+  <a href="./docs/README.es_ES.md">Español</a> •
+  <a href="./docs/README.pt_BR.md">Português (Brasil)</a> •
+  <a href="./docs/README.ru_RU.md">Русский</a> •
+  <a href="./docs/README.hi_IN.md">हिन्दी</a> •
+  <a href="./docs/README.bn_BD.md">বাংলা</a> •
+  <a href="./docs/README.ar.md">العربية</a> •
+  <a href="./docs/README.ur.md">اردو</a>
+</p>
+
+<p align="center">
+  <img alt="A Ripple Song Podcast" src="https://img.shields.io/badge/A%20Ripple%20Song%20Podcast-0.5.0--beta-6366f1?style=for-the-badge&logo=wordpress&logoColor=white" height="40">
+</p>
+
+<h3 align="center">Companion WordPress plugin for podcast RSS feeds</h3>
+
+<p align="center">
+  <a href="https://doc-podcast.aripplesong.me/docs/intro">📖 Tutorial</a> •
+  <a href="https://doc-podcast.aripplesong.me/blog">📝 Blog</a> •
+  <a href="https://github.com/jiejia/a-ripple-song-podcast">⭐ GitHub</a>
+</p>
+
+<p align="center">
+  <img alt="PHP" src="https://img.shields.io/badge/PHP-7.4+-777BB4?style=flat-square&logo=php&logoColor=white">
+  <img alt="WordPress" src="https://img.shields.io/badge/WordPress-5.0+-21759B?style=flat-square&logo=wordpress&logoColor=white">
+  <img alt="License" src="https://img.shields.io/badge/License-GPLv2%2B-blue?style=flat-square">
+</p>
+
+---
 
 # A Ripple Song Podcast
 
-- Contributors: jiejia
-- Donate link: https://github.com/jiejia/
-- Tags: podcast, rss, feed, itunes, apple podcasts, spotify, podcasting 2.0, custom post type, carbon fields
-- Requires at least: 5.0
-- Tested up to: 6.9
-- Requires PHP: 7.4
-- Stable tag: 0.5.0-beta
-- License: GPLv2 or later
+> Podcast RSS feed (`/feed/podcast`) + Episode CPT for the A Ripple Song theme, with iTunes & Podcasting 2.0 support.
 
-Podcast RSS feed (`/feed/podcast`) + Episode CPT for the A Ripple Song theme, with iTunes & Podcasting 2.0 support.
-
-## Description
+## ✨ Description
 
 This plugin adds podcast functionality for the “A Ripple Song” theme/site: manage episodes via a custom post type and generate a podcast RSS feed suitable for Apple Podcasts / Spotify and other directories.
 
@@ -40,7 +65,7 @@ This plugin adds podcast functionality for the “A Ripple Song” theme/site: m
 - Carbon Fields is bundled via Composer `vendor/` (no separate Carbon Fields plugin required).
 - The feed depends on rewrite rules; activation typically flushes rules, but if you get a 404, visit “Settings → Permalinks” and click “Save”.
 
-## Installation
+## 🚀 Installation
 
 1. Upload the `a-ripple-song-podcast` plugin folder to `/wp-content/plugins/` (or install the ZIP via WP Admin)
 2. Activate the plugin in WP Admin
@@ -48,7 +73,7 @@ This plugin adds podcast functionality for the “A Ripple Song” theme/site: m
 4. Create an Episode: `ARS Episodes` → `Add New Episode`, then fill in the “Episode Details” meta box (audio + metadata)
 5. Open the feed at `/feed/podcast/` (or `?feed=podcast`) and submit it to podcast directories
 
-## Frequently Asked Questions
+## ❓ Frequently Asked Questions
 
 ### What is the RSS URL?
 
@@ -66,19 +91,19 @@ On Episode save, the plugin uses getID3 to analyze the audio. For remote URLs, i
 
 No. Carbon Fields is bundled via Composer and booted on `after_setup_theme`.
 
-## Screenshots
+## 🖼️ Screenshots
 
 1. `A Ripple Song` → `Podcast Settings` (channel settings)
 2. “Episode Details” meta box on the `ARS Episodes` edit screen
 3. `/feed/podcast/` RSS output (includes iTunes / Podcasting 2.0 tags)
 
-## Changelog
+## 📝 Changelog
 
 ### 0.5.0-beta
 
 - Beta release: Episode CPT + Podcast RSS feed + admin settings and episode meta fields.
 
-## Upgrade Notice
+## 🔔 Upgrade Notice
 
 ### 0.5.0-beta
 

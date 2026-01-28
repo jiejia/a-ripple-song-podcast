@@ -1,19 +1,44 @@
-[English](../README.md) | [简体中文](README.zh_CN.md) | [繁體中文](README.zh-Hant.md) | [日本語](README.ja.md) | [한국어](README.ko_KR.md) | [Français](README.fr_FR.md) | [Español](README.es_ES.md) | [Português (Brasil)](README.pt_BR.md) | [Русский](README.ru_RU.md) | [हिन्दी](README.hi_IN.md) | [বাংলা](README.bn_BD.md) | [العربية](README.ar.md) | [اردو](README.ur.md)
+<p align="center">
+  <a href="../README.md">English</a> •
+  <a href="README.zh_CN.md">简体中文</a> •
+  <a href="README.zh-Hant.md">繁體中文</a> •
+  <a href="README.ja.md">日本語</a> •
+  <a href="README.ko_KR.md">한국어</a> •
+  <a href="README.fr_FR.md">Français</a> •
+  <a href="README.es_ES.md">Español</a> •
+  <a href="README.pt_BR.md">Português (Brasil)</a> •
+  <a href="README.ru_RU.md">Русский</a> •
+  <a href="README.hi_IN.md">हिन्दी</a> •
+  <a href="README.bn_BD.md">বাংলা</a> •
+  <a href="README.ar.md">العربية</a> •
+  <a href="README.ur.md">اردو</a>
+</p>
+
+<p align="center">
+  <img alt="A Ripple Song Podcast" src="https://img.shields.io/badge/A%20Ripple%20Song%20Podcast-0.5.0--beta-6366f1?style=for-the-badge&logo=wordpress&logoColor=white" height="40">
+</p>
+
+<h3 align="center">Plugin WordPress compagnon pour flux RSS de podcast</h3>
+
+<p align="center">
+  <a href="https://doc-podcast.aripplesong.me/docs/intro">📖 Tutoriel</a> •
+  <a href="https://doc-podcast.aripplesong.me/blog">📝 Blog</a> •
+  <a href="https://github.com/jiejia/a-ripple-song-podcast">⭐ GitHub</a>
+</p>
+
+<p align="center">
+  <img alt="PHP" src="https://img.shields.io/badge/PHP-7.4+-777BB4?style=flat-square&logo=php&logoColor=white">
+  <img alt="WordPress" src="https://img.shields.io/badge/WordPress-5.0+-21759B?style=flat-square&logo=wordpress&logoColor=white">
+  <img alt="License" src="https://img.shields.io/badge/License-GPLv2%2B-blue?style=flat-square">
+</p>
+
+---
 
 # A Ripple Song Podcast
 
-- Contributeurs : jiejia
-- Lien de don : https://github.com/jiejia/
-- Tags : podcast, rss, feed, itunes, apple podcasts, spotify, podcasting 2.0, custom post type, carbon fields
-- Requiert au moins : WordPress 5.0
-- Testé jusqu’à : WordPress 6.9
-- PHP requis : 7.4
-- Version stable : 0.5.0-beta
-- Licence : GPLv2 ou ultérieure
+> Flux RSS podcast (`/feed/podcast`) + CPT Episode pour le thème A Ripple Song, avec prise en charge iTunes & Podcasting 2.0.
 
-Flux RSS podcast (`/feed/podcast`) + CPT Episode pour le thème A Ripple Song, avec prise en charge iTunes & Podcasting 2.0.
-
-## Description
+## ✨ Description
 
 Ce plugin ajoute des fonctionnalités de podcast au thème/site « A Ripple Song » : gérer les épisodes via un type de contenu personnalisé et générer un flux RSS de podcast adapté à Apple Podcasts / Spotify et autres annuaires.
 
@@ -40,7 +65,7 @@ Ce plugin ajoute des fonctionnalités de podcast au thème/site « A Ripple Song
 - Carbon Fields est inclus via Composer `vendor/` (pas besoin d’installer le plugin Carbon Fields séparément).
 - Le flux dépend des règles de réécriture ; l’activation les flush généralement, mais en cas de 404, allez dans « Réglages → Permaliens » et cliquez sur « Enregistrer les modifications ».
 
-## Installation
+## 🚀 Installation
 
 1. Téléversez le dossier du plugin `a-ripple-song-podcast` dans `/wp-content/plugins/` (ou installez le ZIP via l’admin)
 2. Activez le plugin dans l’admin WordPress
@@ -48,7 +73,7 @@ Ce plugin ajoute des fonctionnalités de podcast au thème/site « A Ripple Song
 4. Créez un épisode : `ARS Episodes` → `Add New Episode`, puis renseignez la boîte “Episode Details” (audio + métadonnées)
 5. Ouvrez le flux `/feed/podcast/` (ou `?feed=podcast`) et soumettez-le aux annuaires de podcasts
 
-## FAQ
+## ❓ FAQ
 
 ### Quelle est l’URL du flux RSS ?
 
@@ -66,19 +91,19 @@ Souvent, les règles de réécriture n’ont pas été flush. Allez dans « Rég
 
 Non. Carbon Fields est inclus via Composer et est démarré sur `after_setup_theme`.
 
-## Captures d’écran
+## 🖼️ Captures d’écran
 
 1. `A Ripple Song` → `Podcast Settings` (réglages du podcast)
 2. Boîte “Episode Details” sur l’écran d’édition `ARS Episodes`
 3. Sortie RSS `/feed/podcast/` (inclut les tags iTunes / Podcasting 2.0)
 
-## Journal des changements
+## 📝 Journal des changements
 
 ### 0.5.0-beta
 
 - Version bêta : CPT Episode + flux RSS podcast + réglages admin + champs méta d’épisode.
 
-## Note de mise à jour
+## 🔔 Note de mise à jour
 
 ### 0.5.0-beta
 

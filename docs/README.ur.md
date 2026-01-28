@@ -1,19 +1,44 @@
-[English](../README.md) | [简体中文](README.zh_CN.md) | [繁體中文](README.zh-Hant.md) | [日本語](README.ja.md) | [한국어](README.ko_KR.md) | [Français](README.fr_FR.md) | [Español](README.es_ES.md) | [Português (Brasil)](README.pt_BR.md) | [Русский](README.ru_RU.md) | [हिन्दी](README.hi_IN.md) | [বাংলा](README.bn_BD.md) | [العربية](README.ar.md) | [اردو](README.ur.md)
+<p align="center">
+  <a href="../README.md">English</a> •
+  <a href="README.zh_CN.md">简体中文</a> •
+  <a href="README.zh-Hant.md">繁體中文</a> •
+  <a href="README.ja.md">日本語</a> •
+  <a href="README.ko_KR.md">한국어</a> •
+  <a href="README.fr_FR.md">Français</a> •
+  <a href="README.es_ES.md">Español</a> •
+  <a href="README.pt_BR.md">Português (Brasil)</a> •
+  <a href="README.ru_RU.md">Русский</a> •
+  <a href="README.hi_IN.md">हिन्दी</a> •
+  <a href="README.bn_BD.md">বাংলা</a> •
+  <a href="README.ar.md">العربية</a> •
+  <a href="README.ur.md">اردو</a>
+</p>
+
+<p align="center">
+  <img alt="A Ripple Song Podcast" src="https://img.shields.io/badge/A%20Ripple%20Song%20Podcast-0.5.0--beta-6366f1?style=for-the-badge&logo=wordpress&logoColor=white" height="40">
+</p>
+
+<h3 align="center">پوڈکاسٹ RSS کے لیے WordPress پلگ اِن</h3>
+
+<p align="center">
+  <a href="https://doc-podcast.aripplesong.me/docs/intro">📖 ٹیوٹوریل</a> •
+  <a href="https://doc-podcast.aripplesong.me/blog">📝 بلاگ</a> •
+  <a href="https://github.com/jiejia/a-ripple-song-podcast">⭐ GitHub</a>
+</p>
+
+<p align="center">
+  <img alt="PHP" src="https://img.shields.io/badge/PHP-7.4+-777BB4?style=flat-square&logo=php&logoColor=white">
+  <img alt="WordPress" src="https://img.shields.io/badge/WordPress-5.0+-21759B?style=flat-square&logo=wordpress&logoColor=white">
+  <img alt="License" src="https://img.shields.io/badge/License-GPLv2%2B-blue?style=flat-square">
+</p>
+
+---
 
 # A Ripple Song Podcast
 
-- تعاون کنندگان: jiejia
-- عطیہ لنک: https://github.com/jiejia/
-- ٹیگز: podcast, rss, feed, itunes, apple podcasts, spotify, podcasting 2.0, custom post type, carbon fields
-- کم از کم درکار: WordPress 5.0
-- ٹیسٹ شدہ: WordPress 6.9
-- PHP درکار: 7.4
-- مستحکم ٹیگ: 0.5.0-beta
-- لائسنس: GPLv2 or later
+> A Ripple Song تھیم کے لیے Podcast RSS (`/feed/podcast`) + Episode CPT، iTunes اور Podcasting 2.0 ٹیگز کے ساتھ۔
 
-A Ripple Song تھیم کے لیے Podcast RSS (`/feed/podcast`) + Episode CPT، iTunes اور Podcasting 2.0 ٹیگز کے ساتھ۔
-
-## تعارف
+## ✨ تعارف
 
 یہ پلگ اِن “A Ripple Song” تھیم/سائٹ کے لیے پوڈکاسٹ فیچر مہیا کرتا ہے: کسٹم پوسٹ ٹائپ کے ذریعے ایپی سوڈز مینیج کریں اور Apple Podcasts / Spotify سمیت دیگر ڈائریکٹریز کے لیے موزوں پوڈکاسٹ RSS فیڈ بنائیں۔
 
@@ -40,7 +65,7 @@ A Ripple Song تھیم کے لیے Podcast RSS (`/feed/podcast`) + Episode CPT،
 - Carbon Fields Composer `vendor/` میں bundled ہے (Carbon Fields پلگ اِن علیحدہ انسٹال کرنے کی ضرورت نہیں)۔
 - فیڈ rewrite rules پر منحصر ہے؛ activation عام طور پر rules flush کرتا ہے، لیکن اگر 404 آئے تو “Settings → Permalinks” میں جا کر “Save” پر کلک کریں۔
 
-## انسٹالیشن
+## 🚀 انسٹالیشن
 
 1. `a-ripple-song-podcast` پلگ اِن فولڈر کو `/wp-content/plugins/` میں اپلوڈ کریں (یا WP Admin سے ZIP انسٹال کریں)
 2. پلگ اِن کو WP Admin میں activate کریں
@@ -48,7 +73,7 @@ A Ripple Song تھیم کے لیے Podcast RSS (`/feed/podcast`) + Episode CPT،
 4. Episode بنائیں: `ARS Episodes` → `Add New Episode`، پھر “Episode Details” meta box (audio + metadata) پُر کریں
 5. `/feed/podcast/` (یا `?feed=podcast`) کھولیں اور podcast directories میں submit کریں
 
-## عمومی سوالات
+## ❓ عمومی سوالات
 
 ### RSS URL کیا ہے؟
 
@@ -66,19 +91,19 @@ Episode save ہونے پر پلگ اِن getID3 سے audio analyze کرتا ہے
 
 نہیں۔ Carbon Fields bundled ہے اور `after_setup_theme` پر boot ہوتا ہے۔
 
-## اسکرین شاٹس
+## 🖼️ اسکرین شاٹس
 
 1. `A Ripple Song` → `Podcast Settings` (چینل سیٹنگز)
 2. `ARS Episodes` ایڈٹ اسکرین پر “Episode Details” میٹا باکس
 3. `/feed/podcast/` RSS آؤٹ پٹ (iTunes / Podcasting 2.0 ٹیگز کے ساتھ)
 
-## تبدیلیوں کا ریکارڈ
+## 📝 تبدیلیوں کا ریکارڈ
 
 ### 0.5.0-beta
 
 - بیٹا ریلیز: Episode CPT + Podcast RSS feed + admin settings اور episode meta fields۔
 
-## اپگریڈ نوٹس
+## 🔔 اپگریڈ نوٹس
 
 ### 0.5.0-beta
 
