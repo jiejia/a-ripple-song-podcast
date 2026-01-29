@@ -44,6 +44,25 @@ $excludedFiles   = array_merge(
 	)
 );
 
+// Carbon Fields template files start with HTML and embed PHP blocks. Prefixing them
+// will inject a namespace declaration at the first `<?php` tag which breaks parsing.
+$carbonFieldsTemplatesDir = $inputVendorDir . '/htmlburger/carbon-fields/templates';
+if (is_dir($carbonFieldsTemplatesDir)) {
+	$excludedFiles = array_merge(
+		$excludedFiles,
+		array_map(
+			static fn (SplFileInfo $fileInfo) => $fileInfo->getPathname(),
+			iterator_to_array(
+				$finder::create()
+					->files()
+					->in($carbonFieldsTemplatesDir)
+					->name('*.php'),
+				false
+			)
+		)
+	);
+}
+
 return [
     // The prefix configuration. If a non-null value is used, a random prefix
     // will be generated instead.
@@ -121,7 +140,8 @@ return [
         // 'mb_str_split',
     ],
     'exclude-constants' => [
-        // 'STDIN',
+        // WordPress environment constants.
+        'ABSPATH',
     ],
 
     // List of symbols to expose.
