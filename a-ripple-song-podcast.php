@@ -22,7 +22,7 @@
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-3.0.txt
  * Requires at least: 5.0
- * Requires PHP:      7.4
+ * Requires PHP:      8.2
  * Text Domain:       a-ripple-song-podcast
  * Domain Path:       /languages
  */
@@ -30,6 +30,26 @@
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
 	die;
+}
+
+if ( PHP_VERSION_ID < 80200 ) {
+	add_action(
+		'admin_notices',
+		static function () {
+			$message = sprintf(
+				'A Ripple Song Podcast requires PHP %s or higher. Your server is running PHP %s.',
+				'8.2',
+				PHP_VERSION
+			);
+
+			printf(
+				'<div class="notice notice-error"><p>%s</p></div>',
+				esc_html( $message )
+			);
+		}
+	);
+
+	return;
 }
 
 /**

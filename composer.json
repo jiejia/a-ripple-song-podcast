@@ -2,7 +2,7 @@
   "name": "jiejia/a-ripple-song-podcast",
   "type": "wordpress-plugin",
   "require": {
-    "php": ">=7.4",
+    "php": ">=8.2",
     "htmlburger/carbon-fields": "^3.6"
   },
   "require-dev": {
