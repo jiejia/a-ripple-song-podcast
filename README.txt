@@ -2,12 +2,12 @@
 Contributors: jiejia
 Donate link: https://github.com/jiejia/
 Tags: podcast, rss, feed, itunes, apple podcasts, spotify, podcasting 2.0, custom post type, carbon fields
-Requires at least: 5.0
-Tested up to: 6.9
+Requires at least: 6.6
+Tested up to: 6.6
 Requires PHP: 8.2
 Stable tag: 0.5.0-beta
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-3.0.html
+License: GPL-3.0
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
 Podcast RSS feed (/feed/podcast) + Episode CPT for the A Ripple Song theme, with iTunes & Podcasting 2.0 support.
 

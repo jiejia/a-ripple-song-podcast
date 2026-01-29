@@ -28,8 +28,8 @@
 
 <p align="center">
   <img alt="PHP" src="https://img.shields.io/badge/PHP-8.2+-777BB4?style=flat-square&logo=php&logoColor=white">
-  <img alt="WordPress" src="https://img.shields.io/badge/WordPress-5.0+-21759B?style=flat-square&logo=wordpress&logoColor=white">
-  <img alt="License" src="https://img.shields.io/badge/License-GPLv2%2B-blue?style=flat-square">
+  <img alt="WordPress" src="https://img.shields.io/badge/WordPress-6.6+-21759B?style=flat-square&logo=wordpress&logoColor=white">
+  <img alt="License" src="https://img.shields.io/badge/License-GPL--3.0-blue?style=flat-square">
 </p>
 
 ---

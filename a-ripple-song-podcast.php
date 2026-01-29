@@ -19,9 +19,9 @@
  * Version:           0.5.0-beta
  * Author:            jiejia
  * Author URI:        https://github.com/jiejia/
- * License:           GPL-2.0+
- * License URI:       http://www.gnu.org/licenses/gpl-3.0.txt
- * Requires at least: 5.0
+ * License:           GPL-3.0
+ * License URI:       https://www.gnu.org/licenses/gpl-3.0.html
+ * Requires at least: 6.6
  * Requires PHP:      8.2
  * Text Domain:       a-ripple-song-podcast
  * Domain Path:       /languages
@@ -40,6 +40,26 @@ if ( PHP_VERSION_ID < 80200 ) {
 				'A Ripple Song Podcast requires PHP %s or higher. Your server is running PHP %s.',
 				'8.2',
 				PHP_VERSION
+			);
+
+			printf(
+				'<div class="notice notice-error"><p>%s</p></div>',
+				esc_html( $message )
+			);
+		}
+	);
+
+	return;
+}
+
+if ( isset( $GLOBALS['wp_version'] ) && version_compare( $GLOBALS['wp_version'], '6.6', '<' ) ) {
+	add_action(
+		'admin_notices',
+		static function () {
+			$message = sprintf(
+				'A Ripple Song Podcast requires WordPress %s or higher. Your site is running WordPress %s.',
+				'6.6',
+				$GLOBALS['wp_version']
 			);
 
 			printf(

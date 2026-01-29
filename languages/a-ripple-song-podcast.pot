@@ -1,8 +1,8 @@
 # Copyright (C) 2026 jiejia
-# This file is distributed under the GPL-2.0+.
+# This file is distributed under the GPL-3.0.
 msgid ""
 msgstr ""
-"Project-Id-Version: A Ripple Song Podcast 1.0.0\n"
+"Project-Id-Version: A Ripple Song Podcast 0.5.0-beta\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/a-ripple-song-podcast\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
