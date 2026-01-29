@@ -134,14 +134,28 @@ return [
         // '',                            // Any namespace
     ],
     'exclude-classes' => [
-        // 'ReflectionClassConstant',
+        // WordPress core classes should never be prefixed.
+        '~^WP_~',
+        '~^Walker_~',
     ],
     'exclude-functions' => [
-        // 'mb_str_split',
+        // WordPress core functions should never be prefixed.
+        'content_url',
+        'get_blog_status',
+        'get_current_screen',
+        'plugins_url',
+        'register_block_type',
+        'site_url',
+        'trailingslashit',
+        'untrailingslashit',
     ],
     'exclude-constants' => [
         // WordPress environment constants.
         'ABSPATH',
+        '~^DOING_~',
+        '~^WP_~',
+        'SCRIPT_DEBUG',
+        'SITE_ID_CURRENT_SITE',
     ],
 
     // List of symbols to expose.
