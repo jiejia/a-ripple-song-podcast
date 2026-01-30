@@ -3,7 +3,8 @@ name: Build & Release
 on:
   push:
     tags:
-      - "v*"
+      # Trigger on any tag name (WordPress.org versions are typically numeric, e.g. 0.5.0).
+      - "*"
   workflow_dispatch: {}
 
 jobs:
@@ -36,10 +37,10 @@ jobs:
           php -l public/class-a-ripple-song-podcast-podcast-feed.php
 
       - name: Build plugin zip
-        run: composer run -n build:dist -- "${GITHUB_REF_NAME}"
+        run: ARS_DIST_ZIP_NAME="a-ripple-song-podcast.zip" composer run -n build:dist -- "${GITHUB_REF_NAME}"
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: build/*.zip
+          files: build/a-ripple-song-podcast.zip
           prerelease: ${{ startsWith(github.ref, 'refs/tags/') && contains(github.ref_name, '-') }}

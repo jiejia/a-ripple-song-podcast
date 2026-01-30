@@ -79,7 +79,12 @@ spl_autoload_register(
 return $loader;
 PHP
 
-ZIP_PATH="${BUILD_DIR}/a-ripple-song-podcast-${VERSION}.zip"
+ZIP_NAME="${ARS_DIST_ZIP_NAME:-${2:-}}"
+if [[ -z "${ZIP_NAME}" ]]; then
+  ZIP_NAME="a-ripple-song-podcast-${VERSION}.zip"
+fi
+
+ZIP_PATH="${BUILD_DIR}/${ZIP_NAME}"
 rm -f "${ZIP_PATH}"
 
 (cd "${DIST_ROOT}" && zip -qr "${ZIP_PATH}" "a-ripple-song-podcast")
