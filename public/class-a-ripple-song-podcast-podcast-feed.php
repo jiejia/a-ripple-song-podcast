@@ -62,8 +62,7 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
 	 * @return bool
 	 */
 	private function is_valid_podcast_feed_url() {
-		$request_uri_raw = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
-		$request_uri_raw = is_string( $request_uri_raw ) ? $request_uri_raw : '';
+		$request_uri_raw = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
 		$request_url     = esc_url_raw( home_url( $request_uri_raw ) );
 		$path            = wp_parse_url( $request_url, PHP_URL_PATH );
 		$query           = wp_parse_url( $request_url, PHP_URL_QUERY );
@@ -708,16 +707,14 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
 			return;
 		}
 
-			header( 'Content-Type: application/rss+xml; charset=UTF-8' );
-			status_header( 200 );
-			nocache_headers();
+		header( 'Content-Type: application/rss+xml; charset=UTF-8' );
+		status_header( 200 );
+		nocache_headers();
 
-			$request_method = isset( $_SERVER['REQUEST_METHOD'] ) ? wp_unslash( $_SERVER['REQUEST_METHOD'] ) : 'GET';
-			$request_method = is_string( $request_method ) ? $request_method : 'GET';
-			$request_method = sanitize_text_field( $request_method );
-			if ( strtoupper( $request_method ) === 'HEAD' ) {
-				exit;
-			}
+		$request_method = isset( $_SERVER['REQUEST_METHOD'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) : 'GET';
+		if ( strtoupper( $request_method ) === 'HEAD' ) {
+			exit;
+		}
 
 		$site_url          = home_url( '/' );
 		$feed_url          = $this->get_canonical_feed_url();
