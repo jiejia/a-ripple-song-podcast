@@ -1,5 +1,10 @@
 <?php
 
+// If this file is called directly, abort.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Register /feed/podcast for podcast directories (Apple Podcasts / Spotify / etc).
  *
@@ -57,9 +62,11 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
 	 * @return bool
 	 */
 	private function is_valid_podcast_feed_url() {
-		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? (string) $_SERVER['REQUEST_URI'] : '';
-		$path        = wp_parse_url( $request_uri, PHP_URL_PATH );
-		$query       = wp_parse_url( $request_uri, PHP_URL_QUERY );
+		$request_uri_raw = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+		$request_uri_raw = is_string( $request_uri_raw ) ? $request_uri_raw : '';
+		$request_url     = esc_url_raw( home_url( $request_uri_raw ) );
+		$path            = wp_parse_url( $request_url, PHP_URL_PATH );
+		$query           = wp_parse_url( $request_url, PHP_URL_QUERY );
 
 		if ( is_string( $path ) && preg_match( '~(?:feed/podcast|podcast/feed)/?$~', $path ) ) {
 			return true;
@@ -647,7 +654,7 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
 	 * @param string $site_url
 	 * @return string
 	 */
-	private function ensure_min_channel_description( $description, $title, $subtitle, $author, $feed_url, $site_url ) {
+		private function ensure_min_channel_description( $description, $title, $subtitle, $author, $feed_url, $site_url ) {
 		$description = trim( (string) $description );
 
 		$plain = wp_strip_all_tags( $description, true );
@@ -669,18 +676,21 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
 			$header = $title !== '' ? ( $title . ' — ' . $subtitle ) : $subtitle;
 		}
 
-		$addon_parts = array();
-		if ( $header !== '' ) {
-			$addon_parts[] = $header . '.';
-		}
-		if ( $author !== '' ) {
-			$addon_parts[] = sprintf( __( 'Hosted by %s.', 'a-ripple-song-podcast' ), $author );
-		}
-		if ( $feed_url !== '' ) {
-			$addon_parts[] = sprintf( __( 'Subscribe: %s', 'a-ripple-song-podcast' ), $feed_url );
-		} elseif ( $site_url !== '' ) {
-			$addon_parts[] = sprintf( __( 'Website: %s', 'a-ripple-song-podcast' ), $site_url );
-		}
+			$addon_parts = array();
+			if ( $header !== '' ) {
+				$addon_parts[] = $header . '.';
+			}
+			if ( $author !== '' ) {
+				/* translators: %s: host/author name */
+				$addon_parts[] = sprintf( __( 'Hosted by %s.', 'a-ripple-song-podcast' ), $author );
+			}
+			if ( $feed_url !== '' ) {
+				/* translators: %s: podcast feed URL */
+				$addon_parts[] = sprintf( __( 'Subscribe: %s', 'a-ripple-song-podcast' ), $feed_url );
+			} elseif ( $site_url !== '' ) {
+				/* translators: %s: site URL */
+				$addon_parts[] = sprintf( __( 'Website: %s', 'a-ripple-song-podcast' ), $site_url );
+			}
 
 		$addon = trim( implode( ' ', $addon_parts ) );
 		if ( $addon === '' ) {
@@ -698,13 +708,16 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
 			return;
 		}
 
-		header( 'Content-Type: application/rss+xml; charset=UTF-8' );
-		status_header( 200 );
-		nocache_headers();
+			header( 'Content-Type: application/rss+xml; charset=UTF-8' );
+			status_header( 200 );
+			nocache_headers();
 
-		if ( strtoupper( (string) ( $_SERVER['REQUEST_METHOD'] ?? 'GET' ) ) === 'HEAD' ) {
-			exit;
-		}
+			$request_method = isset( $_SERVER['REQUEST_METHOD'] ) ? wp_unslash( $_SERVER['REQUEST_METHOD'] ) : 'GET';
+			$request_method = is_string( $request_method ) ? $request_method : 'GET';
+			$request_method = sanitize_text_field( $request_method );
+			if ( strtoupper( $request_method ) === 'HEAD' ) {
+				exit;
+			}
 
 		$site_url          = home_url( '/' );
 		$feed_url          = $this->get_canonical_feed_url();
@@ -805,10 +818,16 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
     <channel>
         <title><?php echo esc_html( $channel_title ); ?></title>
         <link><?php echo esc_url( $site_url ); ?></link>
-        <atom:link href="<?php echo esc_url( $feed_url ); ?>" rel="self" type="application/rss+xml" />
-        <language><?php echo esc_html( $channel_language ); ?></language>
-        <description><![CDATA[<?php echo $this->escape_cdata( (string) $channel_description ); ?>]]></description>
-        <itunes:summary><![CDATA[<?php echo $this->escape_cdata( (string) $channel_description ); ?>]]></itunes:summary>
+	        <atom:link href="<?php echo esc_url( $feed_url ); ?>" rel="self" type="application/rss+xml" />
+	        <language><?php echo esc_html( $channel_language ); ?></language>
+	        <description><![CDATA[<?php
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped for CDATA by escape_cdata().
+			echo $this->escape_cdata( (string) $channel_description );
+			?>]]></description>
+	        <itunes:summary><![CDATA[<?php
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped for CDATA by escape_cdata().
+			echo $this->escape_cdata( (string) $channel_description );
+			?>]]></itunes:summary>
         <itunes:subtitle><?php echo esc_html( (string) $channel_subtitle ); ?></itunes:subtitle>
         <itunes:author><?php echo esc_html( (string) $channel_author ); ?></itunes:author>
         <itunes:explicit><?php echo esc_html( (string) $channel_explicit ); ?></itunes:explicit>
@@ -935,8 +954,9 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
 				$item_summary = $episode_summary ? $episode_summary : get_the_excerpt();
 				$item_summary = $this->sanitize_rss_summary( (string) $item_summary );
 
-				$content_html = apply_filters( 'the_content', get_the_content( null, false, $post_id ) );
-				$content_html = str_replace( ']]>', ']]]]><![CDATA[>', (string) $content_html );
+					// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Core filter hook.
+					$content_html = apply_filters( 'the_content', get_the_content( null, false, $post_id ) );
+					$content_html = str_replace( ']]>', ']]]]><![CDATA[>', (string) $content_html );
 				$pub_ts       = (int) get_post_time( 'U', true, $post_id, false );
 				$pub_date     = $this->format_rfc2822_gmt( $pub_ts );
 				$audio_mime   = $this->normalize_enclosure_mime( (string) $audio_url, (string) $audio_mime_raw );
@@ -946,11 +966,20 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
             <link><?php echo esc_url( get_permalink() ); ?></link>
             <guid isPermaLink="<?php echo esc_attr( $episode_guid === $episode_permalink ? 'true' : 'false' ); ?>"><?php echo esc_html( $episode_guid ); ?></guid>
             <pubDate><?php echo esc_html( $pub_date ); ?></pubDate>
-            <description><![CDATA[<?php echo $this->escape_cdata( (string) $item_summary ); ?>]]></description>
-            <itunes:summary><![CDATA[<?php echo $this->escape_cdata( (string) $item_summary ); ?>]]></itunes:summary>
-            <?php if ( $content_html ) : ?>
-            <content:encoded><![CDATA[<?php echo $content_html; ?>]]></content:encoded>
-            <?php endif; ?>
+	            <description><![CDATA[<?php
+					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped for CDATA by escape_cdata().
+					echo $this->escape_cdata( (string) $item_summary );
+					?>]]></description>
+	            <itunes:summary><![CDATA[<?php
+					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped for CDATA by escape_cdata().
+					echo $this->escape_cdata( (string) $item_summary );
+					?>]]></itunes:summary>
+	            <?php if ( $content_html ) : ?>
+	            <content:encoded><![CDATA[<?php
+					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- HTML content is sanitized by core filters; wrapped in CDATA.
+					echo $this->escape_cdata( (string) $content_html );
+					?>]]></content:encoded>
+	            <?php endif; ?>
             <?php if ( $audio_url ) : ?>
             <enclosure url="<?php echo esc_url( $audio_url ); ?>" length="<?php echo esc_attr( $audio_length ); ?>" type="<?php echo esc_attr( $audio_mime ); ?>" />
             <?php endif; ?>
@@ -968,23 +997,21 @@ class A_Ripple_Song_Podcast_Podcast_Feed {
             <?php if ( $episode_image ) : ?>
             <itunes:image href="<?php echo esc_url( $episode_image ); ?>" />
             <?php endif; ?>
-            <?php if ( ! empty( $episode_people ) ) : ?>
-                <?php foreach ( $episode_people as $person ) : ?>
-                    <?php
-						$attrs = '';
+	            <?php if ( ! empty( $episode_people ) ) : ?>
+	                <?php foreach ( $episode_people as $person ) : ?>
+	            <podcast:person<?php
 						if ( ! empty( $person['role'] ) ) {
-							$attrs .= ' role="' . esc_attr( $person['role'] ) . '"';
+							echo ' role="' . esc_attr( $person['role'] ) . '"';
 						}
 						if ( ! empty( $person['href'] ) ) {
-							$attrs .= ' href="' . esc_url( $person['href'] ) . '"';
+							echo ' href="' . esc_url( $person['href'] ) . '"';
 						}
 						if ( ! empty( $person['img'] ) ) {
-							$attrs .= ' img="' . esc_url( $person['img'] ) . '"';
+							echo ' img="' . esc_url( $person['img'] ) . '"';
 						}
-						?>
-            <podcast:person<?php echo $attrs; ?>><?php echo esc_html( $person['name'] ); ?></podcast:person>
-                <?php endforeach; ?>
-            <?php endif; ?>
+						?>><?php echo esc_html( $person['name'] ); ?></podcast:person>
+	                <?php endforeach; ?>
+	            <?php endif; ?>
             <?php if ( $transcript_url ) : ?>
             <podcast:transcript url="<?php echo esc_url( $transcript_url ); ?>" type="<?php echo esc_attr( $this->guess_transcript_type( $transcript_url ) ); ?>" />
             <?php endif; ?>

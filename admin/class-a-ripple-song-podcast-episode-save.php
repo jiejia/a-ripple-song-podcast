@@ -1,5 +1,10 @@
 <?php
 
+// If this file is called directly, abort.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Episode save hooks (auto-fill audio meta, defaults, admin notices).
  *
@@ -129,12 +134,11 @@ class A_Ripple_Song_Podcast_Episode_Save {
 			}
 		}
 
-		if ( ! class_exists( 'getID3' ) ) {
-			$last_error_code = 'getid3_missing';
-			error_log( "Episode #{$post_id}: getID3 not available" );
-			$this->set_audio_meta_last_error( $post_id, $last_error_code );
-			return $result;
-		}
+			if ( ! class_exists( 'getID3' ) ) {
+				$last_error_code = 'getid3_missing';
+				$this->set_audio_meta_last_error( $post_id, $last_error_code );
+				return $result;
+			}
 
 		$upload_dir = wp_get_upload_dir();
 		$file_path  = $audio_url;
@@ -184,30 +188,31 @@ class A_Ripple_Song_Podcast_Episode_Save {
 			if ( $this->is_valid_http_url( $audio_url ) ) {
 				$request_url = $this->encode_url_for_request( $audio_url );
 
-				if ( function_exists( 'wp_http_validate_url' ) && ! wp_http_validate_url( $request_url ) ) {
-					$last_error_code = 'audio_url_rejected';
-					error_log( "Episode #{$post_id}: audio URL rejected by wp_http_validate_url" );
-					$this->set_audio_meta_last_error( $post_id, $last_error_code );
-					return $result;
-				}
+					if ( function_exists( 'wp_http_validate_url' ) && ! wp_http_validate_url( $request_url ) ) {
+						$last_error_code = 'audio_url_rejected';
+						$this->set_audio_meta_last_error( $post_id, $last_error_code );
+						return $result;
+					}
 
 				if ( ! function_exists( 'download_url' ) ) {
 					require_once ABSPATH . 'wp-admin/includes/file.php';
 				}
 
-				$timeout = (int) apply_filters( 'ars_episode_audio_meta_download_timeout', 300, $audio_url, $post_id );
-				if ( $timeout < 30 ) {
-					$timeout = 30;
-				}
+					$timeout = (int) apply_filters( 'a_ripple_song_podcast_episode_audio_meta_download_timeout', 300, $audio_url, $post_id );
+					// Backward compatibility for the original hook name.
+					// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+					$timeout = (int) apply_filters( 'ars_episode_audio_meta_download_timeout', $timeout, $audio_url, $post_id );
+					if ( $timeout < 30 ) {
+						$timeout = 30;
+					}
 
-				$tmp = download_url( $request_url, $timeout );
-				if ( is_wp_error( $tmp ) ) {
-					$last_error_code   = 'audio_download_failed';
-					$last_error_detail = (string) $tmp->get_error_message();
-					error_log( "Episode #{$post_id}: audio download failed - {$last_error_detail}" );
-					$this->set_audio_meta_last_error( $post_id, $last_error_code, $last_error_detail );
-					return $result;
-				}
+					$tmp = download_url( $request_url, $timeout );
+					if ( is_wp_error( $tmp ) ) {
+						$last_error_code   = 'audio_download_failed';
+						$last_error_detail = (string) $tmp->get_error_message();
+						$this->set_audio_meta_last_error( $post_id, $last_error_code, $last_error_detail );
+						return $result;
+					}
 
 				try {
 					$getID3    = new \getID3();
@@ -227,13 +232,12 @@ class A_Ripple_Song_Podcast_Episode_Save {
 					if ( ! empty( $file_info['mime_type'] ) ) {
 						$result['mime'] = (string) $file_info['mime_type'];
 					}
-				} catch ( \Exception $e ) {
-					$last_error_code   = 'getid3_error';
-					$last_error_detail = (string) $e->getMessage();
-					error_log( "Episode #{$post_id}: getID3 error - {$last_error_detail}" );
-				} finally {
-					@unlink( $tmp );
-				}
+					} catch ( \Exception $e ) {
+						$last_error_code   = 'getid3_error';
+						$last_error_detail = (string) $e->getMessage();
+					} finally {
+						wp_delete_file( $tmp );
+					}
 
 				if ( $last_error_code ) {
 					$this->set_audio_meta_last_error( $post_id, $last_error_code, $last_error_detail );
@@ -245,11 +249,10 @@ class A_Ripple_Song_Podcast_Episode_Save {
 				return $result;
 			}
 
-			$last_error_code = 'audio_file_missing';
-			error_log( "Episode #{$post_id}: audio file missing for duration/size/mime detection" );
-			$this->set_audio_meta_last_error( $post_id, $last_error_code );
-			return $result;
-		}
+				$last_error_code = 'audio_file_missing';
+				$this->set_audio_meta_last_error( $post_id, $last_error_code );
+				return $result;
+			}
 
 		try {
 			$getID3    = new \getID3();
@@ -268,11 +271,10 @@ class A_Ripple_Song_Podcast_Episode_Save {
 			if ( ! empty( $file_info['mime_type'] ) ) {
 				$result['mime'] = (string) $file_info['mime_type'];
 			}
-		} catch ( \Exception $e ) {
-			$last_error_code   = 'getid3_error';
-			$last_error_detail = (string) $e->getMessage();
-			error_log( "Episode #{$post_id}: getID3 error - {$last_error_detail}" );
-		}
+			} catch ( \Exception $e ) {
+				$last_error_code   = 'getid3_error';
+				$last_error_detail = (string) $e->getMessage();
+			}
 
 		if ( $last_error_code ) {
 			$this->set_audio_meta_last_error( $post_id, $last_error_code, $last_error_detail );
@@ -354,10 +356,11 @@ class A_Ripple_Song_Podcast_Episode_Save {
 			return;
 		}
 
-		$post_id = isset( $_GET['post'] ) ? (int) $_GET['post'] : 0;
-		if ( $post_id <= 0 ) {
-			return;
-		}
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only reading current post ID to show an admin notice.
+			$post_id = isset( $_GET['post'] ) ? (int) $_GET['post'] : 0;
+			if ( $post_id <= 0 ) {
+				return;
+			}
 
 		$last_error = get_post_meta( $post_id, self::AUDIO_META_LAST_ERROR_KEY, true );
 		if ( empty( $last_error ) ) {
@@ -370,31 +373,38 @@ class A_Ripple_Song_Podcast_Episode_Save {
 			$code   = (string) $last_error['code'];
 			$detail = isset( $last_error['detail'] ) ? (string) $last_error['detail'] : '';
 
-			switch ( $code ) {
-				case 'getid3_missing':
-					$message = sprintf( __( 'Episode #%d: getID3 not available', 'a-ripple-song-podcast' ), $post_id );
-					break;
-				case 'audio_url_rejected':
-					$message = sprintf( __( 'Episode #%d: audio URL rejected by wp_http_validate_url', 'a-ripple-song-podcast' ), $post_id );
-					break;
-				case 'audio_download_failed':
-					$message = sprintf( __( 'Episode #%d: audio download failed - %s', 'a-ripple-song-podcast' ), $post_id, $detail );
-					break;
-				case 'getid3_no_playtime_download':
-					$message = sprintf( __( 'Episode #%d: getID3 did not return playtime_seconds for downloaded audio', 'a-ripple-song-podcast' ), $post_id );
-					break;
-				case 'getid3_no_playtime_local':
-					$message = sprintf( __( 'Episode #%d: getID3 did not return playtime_seconds for local file', 'a-ripple-song-podcast' ), $post_id );
-					break;
-				case 'audio_file_missing':
-					$message = sprintf( __( 'Episode #%d: audio file missing for duration/size/mime detection', 'a-ripple-song-podcast' ), $post_id );
-					break;
-				case 'getid3_error':
-					$message = sprintf( __( 'Episode #%d: getID3 error - %s', 'a-ripple-song-podcast' ), $post_id, $detail );
-					break;
-				default:
-					$message = $detail;
-					break;
+				switch ( $code ) {
+					case 'getid3_missing':
+						/* translators: %d: episode post ID */
+						$message = sprintf( __( 'Episode #%d: getID3 not available', 'a-ripple-song-podcast' ), $post_id );
+						break;
+					case 'audio_url_rejected':
+						/* translators: %d: episode post ID */
+						$message = sprintf( __( 'Episode #%d: audio URL rejected by wp_http_validate_url', 'a-ripple-song-podcast' ), $post_id );
+						break;
+					case 'audio_download_failed':
+						/* translators: 1: episode post ID, 2: error message */
+						$message = sprintf( __( 'Episode #%1$d: audio download failed - %2$s', 'a-ripple-song-podcast' ), $post_id, $detail );
+						break;
+					case 'getid3_no_playtime_download':
+						/* translators: %d: episode post ID */
+						$message = sprintf( __( 'Episode #%d: getID3 did not return playtime_seconds for downloaded audio', 'a-ripple-song-podcast' ), $post_id );
+						break;
+					case 'getid3_no_playtime_local':
+						/* translators: %d: episode post ID */
+						$message = sprintf( __( 'Episode #%d: getID3 did not return playtime_seconds for local file', 'a-ripple-song-podcast' ), $post_id );
+						break;
+					case 'audio_file_missing':
+						/* translators: %d: episode post ID */
+						$message = sprintf( __( 'Episode #%d: audio file missing for duration/size/mime detection', 'a-ripple-song-podcast' ), $post_id );
+						break;
+					case 'getid3_error':
+						/* translators: 1: episode post ID, 2: error message */
+						$message = sprintf( __( 'Episode #%1$d: getID3 error - %2$s', 'a-ripple-song-podcast' ), $post_id, $detail );
+						break;
+					default:
+						$message = $detail;
+						break;
 			}
 		} else {
 			// Backward compatibility: previously stored as a plain string.
@@ -430,10 +440,10 @@ class A_Ripple_Song_Podcast_Episode_Save {
 	}
 
 	private function encode_url_for_request( $url ) {
-		$parts = function_exists( 'wp_parse_url' ) ? wp_parse_url( $url ) : parse_url( $url );
-		if ( $parts === false || ! is_array( $parts ) ) {
-			return $url;
-		}
+			$parts = wp_parse_url( $url );
+			if ( $parts === false || ! is_array( $parts ) ) {
+				return $url;
+			}
 
 		$scheme = isset( $parts['scheme'] ) ? strtolower( (string) $parts['scheme'] ) : '';
 		$host   = isset( $parts['host'] ) ? (string) $parts['host'] : '';

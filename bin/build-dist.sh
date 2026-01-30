@@ -29,7 +29,9 @@ fi
 rsync -a --delete \
   --exclude "/.git/" \
   --exclude "/.github/" \
+  --exclude "/.gitignore" \
   --exclude "/.idea/" \
+  --exclude "/scoper.inc.php" \
   --exclude "/build/" \
   --exclude "/bin/" \
   --exclude "/node_modules/" \

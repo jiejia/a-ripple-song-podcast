@@ -1,5 +1,10 @@
 <?php
 
+// If this file is called directly, abort.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Podcast Episodes (CPT) and taxonomy registration.
  *
@@ -73,6 +78,7 @@ class A_Ripple_Song_Podcast_Episodes {
 
 		global $wpdb;
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- One-time post type key migration.
 		$wpdb->query(
 			$wpdb->prepare(
 				"UPDATE {$wpdb->posts} SET post_type = %s WHERE post_type = %s",

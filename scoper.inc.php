@@ -2,12 +2,17 @@
 
 declare(strict_types=1);
 
-/** @var Symfony\Component\Finder\Finder $finder */
-$finder = Isolated\Symfony\Component\Finder\Finder::class;
+// Prevent direct access via the web. This file is intended for CLI usage (PHP-Scoper).
+if ( ! defined( 'ABSPATH' ) && PHP_SAPI !== 'cli' ) {
+	exit;
+}
+
+/** @var Symfony\Component\Finder\Finder $ars_finder */
+$ars_finder = Isolated\Symfony\Component\Finder\Finder::class;
 
 // Allow overriding the input vendor directory (useful for CI/release builds where
 // dev dependencies should not be included in the shipped vendor).
-$inputVendorDir = getenv('ARS_SCOPER_INPUT_DIR') ?: (__DIR__ . '/vendor');
+$ars_input_vendor_dir = getenv('ARS_SCOPER_INPUT_DIR') ?: (__DIR__ . '/vendor');
 
 // You can do your own things here, e.g. collecting symbols to expose dynamically
 // or files to exclude.
@@ -25,19 +30,19 @@ $inputVendorDir = getenv('ARS_SCOPER_INPUT_DIR') ?: (__DIR__ . '/vendor');
 //         false,
 //     ),
 // );
-$excludedFiles = [];
+$ars_excluded_files = [];
 
 // Keep Composer's autoloader files unscoped so we can bootstrap a working loader,
 // then map prefixed classes back to their original names for file resolution.
-$excludedFiles[] = $inputVendorDir . '/autoload.php';
-$excludedFiles   = array_merge(
-	$excludedFiles,
+$ars_excluded_files[] = $ars_input_vendor_dir . '/autoload.php';
+$ars_excluded_files   = array_merge(
+	$ars_excluded_files,
 	array_map(
 		static fn (SplFileInfo $fileInfo) => $fileInfo->getPathname(),
 		iterator_to_array(
-			$finder::create()
+			$ars_finder::create()
 				->files()
-				->in($inputVendorDir . '/composer')
+				->in($ars_input_vendor_dir . '/composer')
 				->name('*.php'),
 			false
 		)
@@ -46,16 +51,16 @@ $excludedFiles   = array_merge(
 
 // Carbon Fields template files start with HTML and embed PHP blocks. Prefixing them
 // will inject a namespace declaration at the first `<?php` tag which breaks parsing.
-$carbonFieldsTemplatesDir = $inputVendorDir . '/htmlburger/carbon-fields/templates';
-if (is_dir($carbonFieldsTemplatesDir)) {
-	$excludedFiles = array_merge(
-		$excludedFiles,
+$ars_carbon_fields_templates_dir = $ars_input_vendor_dir . '/htmlburger/carbon-fields/templates';
+if (is_dir($ars_carbon_fields_templates_dir)) {
+	$ars_excluded_files = array_merge(
+		$ars_excluded_files,
 		array_map(
 			static fn (SplFileInfo $fileInfo) => $fileInfo->getPathname(),
 			iterator_to_array(
-				$finder::create()
+				$ars_finder::create()
 					->files()
-					->in($carbonFieldsTemplatesDir)
+					->in($ars_carbon_fields_templates_dir)
 					->name('*.php'),
 				false
 			)
@@ -85,9 +90,9 @@ return [
     // For more see: https://github.com/humbug/php-scoper/blob/master/docs/configuration.md#finders-and-paths
     'finders' => [
         // Scope the entire vendor tree, including non-PHP assets (Carbon Fields admin UI).
-        $finder::create()
+        $ars_finder::create()
             ->files()
-            ->in($inputVendorDir)
+            ->in($ars_input_vendor_dir)
             ->ignoreVCS(true)
             ->ignoreDotFiles(true)
             ->exclude([
@@ -108,7 +113,7 @@ return [
     // For more see: https://github.com/humbug/php-scoper/blob/master/docs/configuration.md#patchers
     'exclude-files' => [
         // 'src/an-excluded-file.php',
-        ...$excludedFiles,
+        ...$ars_excluded_files,
     ],
 
     // PHP version (e.g. `'7.2'`) in which the PHP parser and printer will be configured into. This will affect what

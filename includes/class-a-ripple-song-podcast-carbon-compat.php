@@ -1,5 +1,10 @@
 <?php
 
+// If this file is called directly, abort.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Carbon Fields compatibility layer for scoped/unscoped vendor builds.
  *
@@ -134,4 +139,3 @@ class A_Ripple_Song_Podcast_Carbon_Compat {
 		return null;
 	}
 }
-

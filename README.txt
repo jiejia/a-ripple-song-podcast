@@ -1,9 +1,9 @@
 === A Ripple Song Podcast ===
 Contributors: jiejia
 Donate link: https://github.com/jiejia/
-Tags: podcast, rss, feed, itunes, apple podcasts, spotify, podcasting 2.0, custom post type, carbon fields
+Tags: podcast, rss, feed, itunes, podcasting2.0
 Requires at least: 6.6
-Tested up to: 6.6
+Tested up to: 6.9
 Requires PHP: 8.2
 Stable tag: 0.5.0
 License: GPL-3.0

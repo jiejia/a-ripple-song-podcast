@@ -1,5 +1,10 @@
 <?php
 
+// If this file is called directly, abort.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Admin upload MIME support for podcast-related media.
  *
@@ -52,4 +57,3 @@ class A_Ripple_Song_Podcast_Media {
 		return $data;
 	}
 }
-

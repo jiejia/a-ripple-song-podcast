@@ -1,5 +1,10 @@
 <?php
 
+// If this file is called directly, abort.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Carbon Fields UI translations hotfix.
  *
@@ -84,4 +89,3 @@ class A_Ripple_Song_Podcast_Carbon_Fields_UI_I18n {
 		}
 	}
 }
-

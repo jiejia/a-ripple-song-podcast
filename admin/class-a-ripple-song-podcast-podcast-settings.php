@@ -1,5 +1,10 @@
 <?php
 
+// If this file is called directly, abort.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Podcast Settings page (Carbon Fields theme options).
  *
@@ -215,8 +220,9 @@ class A_Ripple_Song_Podcast_Podcast_Settings {
 			return;
 		}
 
-		$input = stripslashes_deep( $_GET );
-		$page  = isset( $input['page'] ) ? $input['page'] : '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only reading admin page slug for internal redirect.
+		$input = wp_unslash( $_GET );
+		$page  = isset( $input['page'] ) ? sanitize_key( (string) $input['page'] ) : '';
 
 		if ( $page !== self::SETTINGS_PAGE_FILE ) {
 			return;
@@ -581,16 +587,17 @@ class A_Ripple_Song_Podcast_Podcast_Settings {
 	/**
 	 * Validate a local cover file.
 	 */
-	private function validate_local_cover_file( $file_path, $max_bytes, $min_dimension, $max_dimension, $allowed_mimes ) {
-		$file_size = @filesize( $file_path );
-		if ( is_int( $file_size ) && $file_size > $max_bytes ) {
-			return new \WP_Error(
-				'file_too_large',
-				sprintf(
-					__( 'Podcast Cover file is too large (%1$s). Please compress it to under %2$s.', 'a-ripple-song-podcast' ),
-					size_format( $file_size ),
-					size_format( $max_bytes )
-				)
+		private function validate_local_cover_file( $file_path, $max_bytes, $min_dimension, $max_dimension, $allowed_mimes ) {
+			$file_size = @filesize( $file_path );
+			if ( is_int( $file_size ) && $file_size > $max_bytes ) {
+				return new \WP_Error(
+					'file_too_large',
+					sprintf(
+						/* translators: 1: file size, 2: maximum allowed size */
+						__( 'Podcast Cover file is too large (%1$s). Please compress it to under %2$s.', 'a-ripple-song-podcast' ),
+						size_format( $file_size ),
+						size_format( $max_bytes )
+					)
 			);
 		}
 
@@ -605,10 +612,10 @@ class A_Ripple_Song_Podcast_Podcast_Settings {
 	/**
 	 * Validate a remote cover URL.
 	 */
-	private function validate_remote_cover_url( $url, $max_bytes, $min_dimension, $max_dimension, $allowed_mimes ) {
-		if ( function_exists( 'wp_http_validate_url' ) && ! wp_http_validate_url( $url ) ) {
-			return new \WP_Error( 'invalid_url', __( 'Podcast Cover URL is invalid.', 'a-ripple-song-podcast' ) );
-		}
+		private function validate_remote_cover_url( $url, $max_bytes, $min_dimension, $max_dimension, $allowed_mimes ) {
+			if ( function_exists( 'wp_http_validate_url' ) && ! wp_http_validate_url( $url ) ) {
+				return new \WP_Error( 'invalid_url', __( 'Podcast Cover URL is invalid.', 'a-ripple-song-podcast' ) );
+			}
 
 		$head_fn       = function_exists( 'wp_safe_remote_head' ) ? 'wp_safe_remote_head' : 'wp_remote_head';
 		$head_response = $head_fn(
@@ -621,34 +628,36 @@ class A_Ripple_Song_Podcast_Podcast_Settings {
 
 		if ( ! is_wp_error( $head_response ) ) {
 			$content_length = wp_remote_retrieve_header( $head_response, 'content-length' );
-			if ( ! empty( $content_length ) && (int) $content_length > $max_bytes ) {
-				return new \WP_Error(
-					'file_too_large',
-					sprintf(
-						__( 'Podcast Cover file is too large (%1$s). Please compress it to under %2$s.', 'a-ripple-song-podcast' ),
-						size_format( (int) $content_length ),
-						size_format( $max_bytes )
-					)
+				if ( ! empty( $content_length ) && (int) $content_length > $max_bytes ) {
+					return new \WP_Error(
+						'file_too_large',
+						sprintf(
+							/* translators: 1: file size, 2: maximum allowed size */
+							__( 'Podcast Cover file is too large (%1$s). Please compress it to under %2$s.', 'a-ripple-song-podcast' ),
+							size_format( (int) $content_length ),
+							size_format( $max_bytes )
+						)
 				);
 			}
 		}
 
-		$temp_file = download_url( $url, 30 );
-		if ( is_wp_error( $temp_file ) ) {
-			return new \WP_Error(
-				'download_failed',
-				sprintf(
-					__( 'Could not download Podcast Cover for validation: %s', 'a-ripple-song-podcast' ),
-					$temp_file->get_error_message()
-				)
-			);
+			$temp_file = download_url( $url, 30 );
+			if ( is_wp_error( $temp_file ) ) {
+				return new \WP_Error(
+					'download_failed',
+					sprintf(
+						/* translators: %s: error message */
+						__( 'Could not download Podcast Cover for validation: %s', 'a-ripple-song-podcast' ),
+						$temp_file->get_error_message()
+					)
+				);
+			}
+
+			$result = $this->validate_local_cover_file( $temp_file, $max_bytes, $min_dimension, $max_dimension, $allowed_mimes );
+			wp_delete_file( $temp_file );
+
+			return $result;
 		}
-
-		$result = $this->validate_local_cover_file( $temp_file, $max_bytes, $min_dimension, $max_dimension, $allowed_mimes );
-		@unlink( $temp_file );
-
-		return $result;
-	}
 
 	/**
 	 * Validate image dimensions and format.
@@ -668,39 +677,42 @@ class A_Ripple_Song_Podcast_Podcast_Settings {
 			return new \WP_Error( 'invalid_format', __( 'Podcast Cover must be JPG or PNG.', 'a-ripple-song-podcast' ) );
 		}
 
-		if ( $width !== $height ) {
-			return new \WP_Error(
-				'not_square',
-				sprintf(
-					__( 'Podcast Cover must be square. Current dimensions: %1$d × %2$d px.', 'a-ripple-song-podcast' ),
-					$width,
-					$height
-				)
+			if ( $width !== $height ) {
+				return new \WP_Error(
+					'not_square',
+					sprintf(
+						/* translators: 1: image width in pixels, 2: image height in pixels */
+						__( 'Podcast Cover must be square. Current dimensions: %1$d × %2$d px.', 'a-ripple-song-podcast' ),
+						$width,
+						$height
+					)
 			);
 		}
 
-		if ( $width < $min_dimension ) {
-			return new \WP_Error(
-				'too_small',
-				sprintf(
-					__( 'Podcast Cover resolution is too small. Minimum: %1$d × %1$d px. Current: %2$d × %2$d px.', 'a-ripple-song-podcast' ),
-					$min_dimension,
-					$width,
-					$height
-				)
-			);
-		}
+			if ( $width < $min_dimension ) {
+				return new \WP_Error(
+					'too_small',
+					sprintf(
+						/* translators: 1: minimum required dimension in pixels, 2: image width in pixels, 3: image height in pixels */
+						__( 'Podcast Cover resolution is too small. Minimum: %1$d × %1$d px. Current: %2$d × %3$d px.', 'a-ripple-song-podcast' ),
+						$min_dimension,
+						$width,
+						$height
+					)
+				);
+			}
 
-		if ( $width > $max_dimension ) {
-			return new \WP_Error(
-				'too_large',
-				sprintf(
-					__( 'Podcast Cover resolution is too large. Maximum: %1$d × %1$d px. Current: %2$d × %2$d px.', 'a-ripple-song-podcast' ),
-					$max_dimension,
-					$width,
-					$height
-				)
-			);
+			if ( $width > $max_dimension ) {
+				return new \WP_Error(
+					'too_large',
+					sprintf(
+						/* translators: 1: maximum allowed dimension in pixels, 2: image width in pixels, 3: image height in pixels */
+						__( 'Podcast Cover resolution is too large. Maximum: %1$d × %1$d px. Current: %2$d × %3$d px.', 'a-ripple-song-podcast' ),
+						$max_dimension,
+						$width,
+						$height
+					)
+				);
 		}
 
 		return true;
