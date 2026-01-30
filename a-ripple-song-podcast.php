@@ -16,7 +16,7 @@
  * Plugin Name:       A Ripple Song Podcast
  * Plugin URI:        https://github.com/jiejia/a-ripple-song-podcast
  * Description:       Podcast features for the A Ripple Song theme: Episode CPT + /feed/podcast RSS (iTunes & Podcasting 2.0 tags).
- * Version:           0.5.0-beta
+ * Version:           0.5.0
  * Author:            jiejia
  * Author URI:        https://github.com/jiejia/
  * License:           GPL-3.0
@@ -74,10 +74,10 @@ if ( isset( $GLOBALS['wp_version'] ) && version_compare( $GLOBALS['wp_version'],
 
 /**
  * Currently plugin version.
- * Start at version 0.5.0-beta and use SemVer - https://semver.org
+ * Start at version 0.5.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'A_RIPPLE_SONG_PODCAST_VERSION', '0.5.0-beta' );
+define( 'A_RIPPLE_SONG_PODCAST_VERSION', '0.5.0' );
 
 $autoload = __DIR__ . '/vendor/autoload.php';
 $scoper_autoload = __DIR__ . '/vendor/scoper-autoload.php';

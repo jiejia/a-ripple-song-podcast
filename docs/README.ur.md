@@ -99,12 +99,12 @@ Episode save ہونے پر پلگ اِن getID3 سے audio analyze کرتا ہے
 
 ## 📝 تبدیلیوں کا ریکارڈ
 
-### 0.5.0-beta
+### 0.5.0
 
 - بیٹا ریلیز: Episode CPT + Podcast RSS feed + admin settings اور episode meta fields۔
 
 ## 🔔 اپگریڈ نوٹس
 
-### 0.5.0-beta
+### 0.5.0
 
 بیٹا ریلیز۔

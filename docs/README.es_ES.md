@@ -99,12 +99,12 @@ No. Carbon Fields viene incluido vía Composer y se arranca en `after_setup_them
 
 ## 📝 Registro de cambios
 
-### 0.5.0-beta
+### 0.5.0
 
 - Versión beta: CPT de episodios + RSS de podcast + ajustes admin + metacampos del episodio.
 
 ## 🔔 Aviso de actualización
 
-### 0.5.0-beta
+### 0.5.0
 
 Versión beta.

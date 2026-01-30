@@ -99,12 +99,12 @@ No. Carbon Fields is bundled via Composer and booted on `after_setup_theme`.
 
 ## 📝 Changelog
 
-### 0.5.0-beta
+### 0.5.0
 
 - Beta release: Episode CPT + Podcast RSS feed + admin settings and episode meta fields.
 
 ## 🔔 Upgrade Notice
 
-### 0.5.0-beta
+### 0.5.0
 
 Beta release.

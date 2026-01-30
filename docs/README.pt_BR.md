@@ -99,12 +99,12 @@ Não. O Carbon Fields está incluído via Composer e é inicializado em `after_s
 
 ## 📝 Registro de alterações
 
-### 0.5.0-beta
+### 0.5.0
 
 - Versão beta: CPT de episódios + RSS de podcast + configurações no admin + campos meta do episódio.
 
 ## 🔔 Aviso de atualização
 
-### 0.5.0-beta
+### 0.5.0
 
 Versão beta.

@@ -5,7 +5,7 @@ Tags: podcast, rss, feed, itunes, apple podcasts, spotify, podcasting 2.0, custo
 Requires at least: 6.6
 Tested up to: 6.6
 Requires PHP: 8.2
-Stable tag: 0.5.0-beta
+Stable tag: 0.5.0
 License: GPL-3.0
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -72,10 +72,10 @@ No. Carbon Fields is bundled via Composer and booted on `after_setup_theme`.
 
 == Changelog ==
 
-= 0.5.0-beta =
+= 0.5.0 =
 * Beta release: Episode CPT + Podcast RSS feed + admin settings and episode meta fields.
 
 == Upgrade Notice ==
 
-= 0.5.0-beta =
+= 0.5.0 =
 Beta release.
